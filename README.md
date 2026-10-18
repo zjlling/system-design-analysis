@@ -1,6 +1,18 @@
 # system-design-analysis
 系统设计与分析课程作业
 
-## 📎 项目报告文件
-> ⚠️ GitHub网页端PDF预览可能加载失败，点击链接下载到本地打开
-- [📄 系统设计与分析课程作业PDF](https://github.com/zjling/system-design-analysis/blob/main/左金灵%20信管T2401%208102240212.pdf)
+# system-design-analysis
+系统设计与分析课程作业
+
+## 📖 项目介绍
+本项目为信管专业《系统设计与分析》课程作业，主题是云齿通口腔管理系统，包含完整系统分析、UML建模、系统设计文档。
+
+## 📎 作业报告文档
+> ⚠️ 文件较大（16.6MB），GitHub网页无法在线预览，点击链接进入页面后，点右上角下载按钮，本地打开PDF。
+- [📄 云齿通_系统分析与设计报告.pdf](https://github.com/zjling/system-design-analysis/blob/main/云齿通_系统分析与设计报告.pdf)
+
+### 📥 获取全部项目文件
+仓库主页右上角绿色按钮 **Code → Download ZIP**，一键打包下载仓库所有文件。
+
+## 👤 作者
+左金灵 | 信管T2401 | 学号：8102240212
