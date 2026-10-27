@@ -6,7 +6,7 @@
 
 ## 📎 作业报告文档
 > ⚠️ 文档大小16.6MB，GitHub**无法在线预览PDF**，点击链接进入页面，点页面右上角⬇下载按钮，下载到本地电脑打开。
-- [📄 云齿通_系统分析与设计报告.pdf](https://github.com/zjlling/system-design-analysis/blob/main/云齿通_系统分析与设计报告.pdf)
+- [📄 云齿通_系统分析与设计报告.pdf](https://github.com/zjlling/system-design-analysis/blob/main/8102240212_左金灵_信管T2401_v2.pdf)
 
 ## 👤 作者
 左金灵 | 信管T2401 | 学号：8102240212
