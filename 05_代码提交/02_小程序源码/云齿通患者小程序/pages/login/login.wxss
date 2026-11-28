@@ -1,3 +1,0 @@
-
-.login-box .input { height: 96rpx; line-height: 96rpx; min-height: 96rpx; padding: 0 26rpx; }
-.login-btn { height: 96rpx; line-height: 96rpx; }
