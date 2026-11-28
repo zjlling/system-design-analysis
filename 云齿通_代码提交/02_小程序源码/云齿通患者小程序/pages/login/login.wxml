@@ -1,0 +1,12 @@
+<view class="login-page">
+  <view class="login-brand">
+    <view class="login-logo">齿</view>
+    <text class="login-title">云齿通 CloudDent</text>
+    <text class="login-sub">方寸口腔连锁门诊</text>
+  </view>
+  <view class="login-box">
+    <input class="input" type="number" placeholder="手机号" placeholder-class="ph" value="{{phone}}" bindinput="onPhone" />
+    <input class="input" password placeholder="密码" placeholder-class="ph" value="{{password}}" bindinput="onPassword" />
+    <button class="btn btn-primary login-btn" bindtap="login">登 录</button>
+  </view>
+</view>
