@@ -1,0 +1,30 @@
+<view class="page">
+  <view class="card">
+    <text class="card-title">会员账户</text>
+    <view class="grid" style="text-align:center">
+      <view style="width:33.33%"><text class="stat-num">¥{{balance}}</text><text class="stat-label">储值余额</text></view>
+      <view style="width:33.33%"><text class="stat-num">{{points}}</text><text class="stat-label">可用积分</text></view>
+      <view style="width:33.33%"><text class="stat-num" style="font-size:30rpx">{{level}}</text><text class="stat-label">会员等级</text></view>
+    </view>
+    <view class="divider"></view>
+    <view class="kv"><text class="kv-label">会员卡号</text><text>{{cardNo}}</text></view>
+    <view class="kv"><text class="kv-label">所属门店</text><text>{{shopName}}</text></view>
+  </view>
+
+  <view class="card">
+    <text class="card-title">就诊反馈</text>
+    <textarea class="textarea" placeholder="请填写您的就诊体验或建议" value="{{content}}" bindinput="onInput" />
+    <button class="btn btn-primary" style="margin-top:24rpx" bindtap="submit">提交反馈</button>
+  </view>
+
+  <view class="card">
+    <text class="card-title">我的反馈</text>
+    <view class="list-item" wx:for="{{feedbacks}}" wx:key="id">
+      <view style="flex:1">
+        <text class="item-title">{{item.content}}</text>
+        <text class="item-sub">{{item.date}} · {{item.reply || '待回复'}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{feedbacks.length === 0}}">暂无反馈记录</view>
+  </view>
+</view>

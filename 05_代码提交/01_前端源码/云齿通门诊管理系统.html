@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云齿通 CloudDent · 门诊管理系统</title>
+  <style>
+/* ============================================================
+ * 云齿通 CloudDent —— 全局样式
+ * 主题：医疗青绿 · 干净专业
+ * ============================================================ */
+:root {
+  --primary: #0f766e;
+  --primary-2: #0d9488;
+  --primary-3: #14b8a6;
+  --sidebar-bg: #0c3a3e;
+  --sidebar-bg2: #0a2f33;
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --danger: #dc2626;
+  --warn: #d97706;
+  --ok: #16a34a;
+  --info: #0ea5e9;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, .06), 0 4px 14px rgba(15, 23, 42, .05);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; font-size: 13px; }
+
+/* ---------- Toast ---------- */
+#toast-box { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; display: none; }
+.toast {
+  background: #0f172a; color: #fff; padding: 10px 22px; border-radius: 999px;
+  font-size: 13px; box-shadow: 0 6px 24px rgba(15, 23, 42, .25); white-space: nowrap;
+}
+.toast.warn { background: #b45309; }
+.toast.info { background: #0e7490; }
+
+/* ---------- 登录页 ---------- */
+#login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0b3a3e 0%, #0f766e 55%, #14b8a6 120%);
+  padding: 24px;
+}
+.login-card {
+  width: 420px; max-width: 100%; background: #fff; border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .28); overflow: hidden;
+}
+.login-brand {
+  background: linear-gradient(135deg, #0b3a3e, #0f766e);
+  color: #fff; padding: 34px 36px 26px;
+}
+.login-brand .logo-row { display: flex; align-items: center; gap: 12px; }
+.login-brand .logo-badge {
+  width: 46px; height: 46px; border-radius: 12px; background: rgba(255, 255, 255, .14);
+  display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff;
+}
+.login-brand h1 { font-size: 22px; letter-spacing: 1px; }
+.login-brand p { font-size: 12px; opacity: .75; margin-top: 2px; }
+.login-body { padding: 28px 36px 34px; }
+.login-field { margin-bottom: 16px; }
+.login-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.login-field input {
+  width: 100%; padding: 11px 14px; border: 1px solid var(--line); border-radius: 8px; outline: none;
+  transition: border .15s;
+}
+.login-field input:focus { border-color: var(--primary-2); box-shadow: 0 0 0 3px rgba(13, 148, 136, .12); }
+.login-btn {
+  width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: 8px;
+  font-size: 15px; letter-spacing: 2px; transition: background .15s;
+}
+.login-btn:hover { background: var(--primary-2); }
+.quick-row { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+.quick-account {
+  border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 14px;
+  font-size: 12px; color: var(--muted); transition: all .15s;
+}
+.quick-account:hover { border-color: var(--primary-2); color: var(--primary); background: #f0fdfa; }
+.login-tip { margin-top: 16px; font-size: 12px; color: #94a3b8; text-align: center; }
+
+/* ---------- 整体布局 ---------- */
+#app-shell { display: none; min-height: 100vh; }
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 216px; z-index: 50;
+  background: linear-gradient(180deg, var(--sidebar-bg), var(--sidebar-bg2));
+  color: #cbd5e1; display: flex; flex-direction: column;
+}
+.side-logo { padding: 18px 18px 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.side-logo .logo-row { display: flex; align-items: center; gap: 10px; color: #fff; }
+.side-logo .logo-badge {
+  width: 36px; height: 36px; border-radius: 9px; background: rgba(255, 255, 255, .13);
+  display: flex; align-items: center; justify-content: center; font-size: 19px;
+}
+.side-logo h1 { font-size: 16px; letter-spacing: .5px; }
+.side-logo p { font-size: 11px; opacity: .65; }
+#nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px;
+  color: #cbd5e1; font-size: 13.5px; margin-bottom: 3px; transition: background .15s, color .15s;
+}
+.nav-item:hover { background: rgba(255, 255, 255, .07); color: #fff; }
+.nav-item.active { background: var(--primary-2); color: #fff; font-weight: 600; }
+/* 侧栏分组标题：可点击展开 / 收起 */
+.nav-group {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; box-sizing: border-box; margin: 0; padding: 12px 12px 6px;
+  background: none; border: 0; cursor: pointer; text-align: left;
+  font-family: inherit; font-size: 11px; letter-spacing: .08em;
+  color: rgba(203, 213, 225, .55); user-select: none; transition: color .15s;
+}
+.nav-group:first-child { padding-top: 2px; }
+.nav-group:hover { color: #e2e8f0; }
+.nav-group .chev {
+  width: 0; height: 0; margin-right: 3px; flex: none;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid currentColor; transition: transform .18s;
+}
+.nav-group.folded .chev { transform: rotate(-90deg); }
+.nav-box[hidden] { display: none; }
+.side-foot { padding: 14px 18px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 11px; color: #7c9a9e; }
+
+.main { margin-left: 216px; min-height: 100vh; display: flex; flex-direction: column; }
+.topbar {
+  height: 58px; background: #fff; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 26px;
+  position: sticky; top: 0; z-index: 40;
+}
+.topbar .crumb { font-size: 13px; color: var(--muted); }
+.topbar .user-box { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--primary);
+  color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;
+}
+.user-box .u-name { font-size: 13.5px; font-weight: 600; }
+.user-box .u-role { font-size: 11px; color: var(--muted); }
+.btn-logout {
+  border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 7px;
+  padding: 5px 12px; font-size: 12px; transition: all .15s;
+}
+.btn-logout:hover { color: var(--danger); border-color: #fecaca; }
+
+#view { padding: 24px 26px 40px; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+/* ---------- 页面头 ---------- */
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.page-head h2 { font-size: 20px; font-weight: 700; }
+.page-head .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+/* ---------- 卡片 ---------- */
+.card {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 18px 20px; margin-bottom: 18px;
+}
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.grid-2 .card { margin-bottom: 0; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 18px; }
+.stat-card {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 18px; display: flex; align-items: center; gap: 14px;
+}
+.stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.stat-label { font-size: 12.5px; color: var(--muted); }
+.stat-value { font-size: 21px; font-weight: 700; margin-top: 2px; }
+
+/* ---------- 表格 ---------- */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th {
+  text-align: left; font-size: 12px; color: var(--muted); font-weight: 600;
+  padding: 9px 10px; border-bottom: 1px solid var(--line); background: #f8fafc; white-space: nowrap;
+}
+.tbl td { padding: 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; vertical-align: middle; }
+.tbl tbody tr:hover { background: #f8fafc; }
+.tbl .empty { text-align: center; color: #94a3b8; padding: 26px 0; }
+.tbl td.op { white-space: nowrap; }
+.muted { color: var(--muted); }
+.muted.sm { font-size: 11px; }
+
+/* ---------- 按钮 ---------- */
+.btn {
+  border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 7px;
+  padding: 7px 14px; font-size: 13px; transition: all .15s;
+}
+.btn:hover { border-color: var(--primary-2); color: var(--primary); }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-2); color: #fff; }
+.btn-sm { padding: 4px 10px; font-size: 12px; border-radius: 6px; margin-right: 6px; }
+.btn-plain { border-color: transparent; background: transparent; color: var(--muted); }
+.btn-plain:hover { color: var(--primary); border-color: transparent; background: #f0fdfa; }
+.btn-danger-plain { border-color: transparent; background: transparent; color: var(--danger); }
+.btn-danger-plain:hover { background: #fef2f2; }
+
+/* ---------- 表单 ---------- */
+.inp {
+  width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; outline: none;
+  transition: border .15s; background: #fff;
+}
+.inp:focus { border-color: var(--primary-2); box-shadow: 0 0 0 3px rgba(13, 148, 136, .10); }
+textarea.inp { resize: vertical; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.form-item label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+.form-item:has(textarea) { grid-column: 1 / -1; }
+.form-item:has(input[type="date"]) { }
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.toolbar .inp { width: 260px; }
+.mb { margin-bottom: 12px; }
+.mt { margin-top: 14px; }
+
+/* ---------- 筛选 chip ---------- */
+.chip {
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; font-size: 12.5px;
+  color: var(--muted); background: #fff; transition: all .15s;
+}
+.chip:hover { border-color: var(--primary-2); color: var(--primary); }
+.chip.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+/* ---------- 标签 ---------- */
+.tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; white-space: nowrap; }
+.tag-ok { background: #dcfce7; color: #15803d; }
+.tag-warn { background: #fef3c7; color: #b45309; }
+.tag-bad { background: #fee2e2; color: #b91c1c; }
+.tag-info { background: #e0f2fe; color: #0369a1; }
+
+/* ---------- 弹窗 ---------- */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(15, 23, 42, .45); z-index: 100;
+  display: flex; align-items: flex-start; justify-content: center; padding: 6vh 16px 16px; overflow-y: auto;
+}
+.modal-box {
+  background: #fff; border-radius: 14px; width: 620px; max-width: 100%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .25); animation: pop .18s ease-out;
+}
+.modal-box.wide { width: 780px; }
+@keyframes pop { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; border-bottom: 1px solid var(--line);
+}
+.modal-head h3 { font-size: 16px; }
+.modal-x { border: none; background: none; font-size: 22px; color: var(--muted); line-height: 1; }
+.modal-x:hover { color: var(--text); }
+.modal-body { padding: 20px 22px; max-height: 68vh; overflow-y: auto; }
+.modal-foot { padding: 14px 22px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ---------- 患者详情 ---------- */
+.patient-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.patient-head .avatar { width: 46px; height: 46px; font-size: 19px; border-radius: 50%; }
+.pt-tags { margin-left: auto; }
+.kv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 8px; }
+.kv-grid > div { background: #f8fafc; border-radius: 8px; padding: 10px 12px; }
+.kv-grid i { display: block; font-style: normal; font-size: 11px; color: var(--muted); }
+.kv-grid b { font-size: 13px; font-weight: 600; }
+.sub-title { font-size: 13px; color: var(--muted); margin: 16px 0 8px; font-weight: 600; }
+.rec-text { background: #f8fafc; border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+
+/* ---------- 收费 ---------- */
+.bill-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.pay-sum { text-align: right; margin-top: 14px; font-size: 14px; color: var(--muted); }
+.pay-sum b { color: var(--danger); font-size: 20px; }
+
+/* ---------- 病历 ---------- */
+.rx-block { margin-top: 14px; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 14px; }
+.rx-head { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+.rx-add { display: flex; gap: 10px; margin-bottom: 10px; }
+.rx-tbl th, .rx-tbl td { padding: 7px 8px; }
+.rx-total { text-align: right; margin-top: 8px; font-size: 13px; color: var(--muted); }
+.rx-total b { font-size: 16px; color: var(--text); }
+
+/* ---------- 排班 ---------- */
+.sched-tbl th { text-align: center; }
+.sched-tbl td { text-align: center; }
+.st-emp { text-align: left !important; white-space: nowrap; }
+.st-emp b { display: block; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; margin: 1px 2px; }
+.dot.on { background: var(--primary-2); }
+.legend-line { display: flex; gap: 16px; margin-bottom: 12px; font-size: 12px; color: var(--muted); }
+.note { margin-top: 10px; }
+
+/* ---------- 库存 ---------- */
+.stock-low { color: var(--danger); font-weight: 700; }
+.stock-low::after { content: " 预警"; font-size: 11px; color: var(--danger); }
+
+/* ---------- 图表 ---------- */
+.donut-wrap { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.donut-legend-list { flex: 1; min-width: 180px; }
+.donut-legend { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 0; }
+.donut-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.donut-legend span { color: var(--muted); flex: 1; }
+.donut-legend b { font-weight: 600; }
+.donut-legend em { font-style: normal; color: #94a3b8; font-size: 11px; width: 42px; text-align: right; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1080px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  /* 目录始终固定在左侧侧边栏；窄窗口不做专门适配 */
+  #view { padding: 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .toolbar .inp { width: 100%; }
+  .tbl { display: block; overflow-x: auto; }
+}
+
+  /* 绩效工资条：月份切换与合计行 */
+  .perf-tabs{display:flex;gap:8px;margin:4px 0 16px}
+  .perf-tab{padding:7px 18px;border:1px solid #cbd5e1;background:#fff;color:#475569;border-radius:8px;font-size:13px;cursor:pointer;transition:.15s}
+  .perf-tab:hover{border-color:#0f766e;color:#0f766e}
+  .perf-tab.active{background:#0f766e;color:#fff;border-color:#0f766e;font-weight:700}
+  .tbl tr.sum-row{background:#f8fafc}
+  .tbl tr.net-row{background:#e6f5f3}
+  .tbl tr.net-row td{color:#0f766e;font-size:15px}
+  .muted{color:#64748b;font-size:12px}
+</style>
+  <style>
+    .top-select { height: 32px; padding: 0 10px; border: 1px solid #dbe3ea; border-radius: 7px;
+      background: #fff; color: #334155; font-size: 12.5px; outline: none; }
+    .top-select:focus { border-color: #0d9488; }
+    .divider { height: 1px; background: #eef2f5; margin: 14px 0; }
+    .login-brand .logo-row { display: flex; align-items: center; gap: 12px; }
+    .login-brand .logo-badge { width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,.16);
+      display: flex; align-items: center; justify-content: center; }
+    #btn-reset { display: none; }
+    .role-chip { display: inline-flex; align-items: center; height: 32px; padding: 0 12px;
+      border-radius: 7px; background: #f0fdfa; color: #0f766e; font-size: 12.5px; font-weight: 600;
+      border: 1px solid #99f6e4; white-space: nowrap; }
+  </style>
+<script>
+(function () {
+  try { var t='__cd_probe__'; window.localStorage.setItem(t,'1'); window.localStorage.removeItem(t); }
+  catch (e) {
+    var mem={_d:{},getItem:function(k){return Object.prototype.hasOwnProperty.call(this._d,k)?this._d[k]:null;},
+      setItem:function(k,v){this._d[k]=String(v);},removeItem:function(k){delete this._d[k];},clear:function(){this._d={};}};
+    try { Object.defineProperty(window,'localStorage',{value:mem,configurable:true}); }
+    catch (e2) { try { window.localStorage=mem; } catch (e3) {} }
+  }
+})();
+</script>
+</head>
+<body>
+
+  <div id="login-wrap" style="display:flex">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="logo-row">
+          <div class="logo-badge">
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M8 10.5c2.2 0 3 .8 4 2 1-1.2 1.8-2 4-2s3 .8 4 2c1-1.2 1.8-2 4-2"/><path d="M8 14v8c0 1.2 1.5 2 2.8 2 .8 0 1.4-.4 1.6-1l1-3.5c.4-1.4 2.8-1.4 3.2 0l1 3.5c.2.6.8 1 1.6 1 1.3 0 2.8-.8 2.8-2v-8"/></svg>
+          </div>
+          <div>
+            <h1>云齿通 CloudDent</h1>
+            <p>方寸口腔连锁门诊 · 门诊管理系统</p>
+          </div>
+        </div>
+      </div>
+      <div class="login-body">
+        <div class="login-field">
+          <label>用户名</label>
+          <input id="login-user" placeholder="请输入用户名" autocomplete="off">
+        </div>
+        <div class="login-field">
+          <label>密码</label>
+          <input id="login-pass" type="password" placeholder="请输入密码">
+        </div>
+        <button class="login-btn" id="btn-login">登 录</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-shell" style="display:none">
+    <aside class="sidebar">
+      <div class="side-logo">
+        <div class="logo-row">
+          <div class="logo-badge">
+            <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M8 10.5c2.2 0 3 .8 4 2 1-1.2 1.8-2 4-2s3 .8 4 2c1-1.2 1.8-2 4-2"/><path d="M8 14v8c0 1.2 1.5 2 2.8 2 .8 0 1.4-.4 1.6-1l1-3.5c.4-1.4 2.8-1.4 3.2 0l1 3.5c.2.6.8 1 1.6 1 1.3 0 2.8-.8 2.8-2v-8"/></svg>
+          </div>
+          <div>
+            <h1>云齿通 CloudDent</h1>
+            <p>方寸口腔连锁门诊</p>
+          </div>
+        </div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="side-foot">方寸口腔连锁门诊</div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <div class="crumb" id="crumb">方寸口腔连锁门诊</div>
+        <div class="user-box">
+          <select class="top-select" id="shop-filter" aria-label="门店">
+            <option value="ALL">全部门店</option>
+            <option value="S1">东方新城店</option>
+            <option value="S2">藏珑店</option>
+            <option value="S3">北辰三角洲店</option>
+          </select>
+          <span class="role-chip" id="role-chip">总后台</span>
+          <div class="avatar" id="user-avatar"></div>
+          <div>
+            <div class="u-name" id="user-name"></div>
+            <div class="u-role" id="user-role"></div>
+          </div>
+          <button class="btn-logout" id="btn-logout">退出</button>
+        </div>
+      </header>
+      <main id="view"></main>
+    </div>
+  </div>
+
+  <script>
+/* 云齿通 CloudDent · 方寸口腔连锁门诊管理系统 —— 数据层（本地演示数据） */
+(function () {
+  'use strict';
+
+  var SHOPS = [
+    { id: 'S1', name: '东方新城店', address: '长沙市芙蓉区东方新城 1 栋', tel: '0731-8866 1201', chairs: 6, status: '营业中' },
+    { id: 'S2', name: '藏珑店',     address: '长沙市开福区藏珑路 88 号',   tel: '0731-8866 1202', chairs: 4, status: '营业中' },
+    { id: 'S3', name: '北辰三角洲店', address: '长沙市开福区北辰三角洲 A2', tel: '0731-8866 1203', chairs: 5, status: '营业中' }
+  ];
+  function shopName(id) {
+    if (id === 'ALL' || !id) return '全部门店';
+    var s = SHOPS.find(function (x) { return x.id === id; });
+    return s ? s.name : id;
+  }
+
+  /* 总后台只有一个账号；进入后用「业务人员」切换工作视图 */
+  var ACCOUNT = { username: 'admin', password: '123456' };
+
+  var STAFF = {
+    all:       { role: 'all',       label: '总后台',   name: '系统管理员', shopId: 'ALL' },
+    reception: { role: 'reception', label: '前台导诊', name: '林晓',       shopId: 'S1' },
+    doctor:    { role: 'doctor',    label: '口腔医生', name: '张明远',     shopId: 'S1', doctorId: 'D01' },
+    hq:        { role: 'hq',        label: '门诊总部', name: '总部核查员', shopId: 'ALL' }
+  };
+
+  var DOCTORS = [
+    { id: 'D01', name: '张明远', title: '主任医师',   dept: '口腔修复科', shopId: 'S1', tel: '138****1021' },
+    { id: 'D02', name: '李思颖', title: '主治医师',   dept: '牙体牙髓科', shopId: 'S2', tel: '138****1022' },
+    { id: 'D03', name: '王浩然', title: '主治医师',   dept: '正畸科',     shopId: 'S3', tel: '138****1023' },
+    { id: 'D04', name: '陈静怡', title: '主治医师',   dept: '牙周科',     shopId: 'S1', tel: '138****1024' }
+  ];
+  function doctorName(id) {
+    var d = DOCTORS.find(function (x) { return x.id === id; });
+    return d ? d.name : (id || '—');
+  }
+
+  var SERVICES = [
+    { id: 'SV01', name: '口腔检查',       price: 180 },
+    { id: 'SV02', name: '超声波洁牙',     price: 320 },
+    { id: 'SV03', name: '窝沟封闭',       price: 260 },
+    { id: 'SV04', name: '树脂充填',       price: 420 },
+    { id: 'SV05', name: '根管治疗（前牙）', price: 980 },
+    { id: 'SV06', name: '根管治疗（后牙）', price: 1680 },
+    { id: 'SV07', name: '隐形矫正复诊',   price: 1200 },
+    { id: 'SV08', name: '牙齿美白',       price: 1280 },
+    { id: 'SV09', name: '简单拔牙',       price: 300 },
+    { id: 'SV10', name: '种植修复',       price: 6800 }
+  ];
+
+  var PATIENTS = [
+    { id: 'P001', name: '陈女士',   gender: '女', age: 34, phone: '13800000001', allergy: '青霉素过敏', shopId: 'S1', level: '银卡会员', doctorId: 'D01', created: '2025-03-12' },
+    { id: 'P002', name: '刘先生',   gender: '男', age: 41, phone: '13800000012', allergy: '无',         shopId: 'S1', level: '普通',     doctorId: 'D01', created: '2025-06-08' },
+    { id: 'P003', name: '周小朋友', gender: '女', age: 8,  phone: '13800000023', allergy: '乳胶过敏',   shopId: 'S1', level: '普通',     doctorId: 'D04', created: '2026-01-19' },
+    { id: 'P004', name: '赵女士',   gender: '女', age: 29, phone: '13800000002', allergy: '无',         shopId: 'S2', level: '金卡会员', doctorId: 'D02', created: '2024-11-02' },
+    { id: 'P005', name: '孙先生',   gender: '男', age: 52, phone: '13800000025', allergy: '高血压',     shopId: 'S2', level: '普通',     doctorId: 'D02', created: '2025-09-16' },
+    { id: 'P006', name: '何女士',   gender: '女', age: 26, phone: '13800000003', allergy: '碘过敏',     shopId: 'S3', level: '银卡会员', doctorId: 'D03', created: '2025-07-30' },
+    { id: 'P007', name: '吴先生',   gender: '男', age: 37, phone: '13800000037', allergy: '无',         shopId: 'S3', level: '普通',     doctorId: 'D03', created: '2026-02-11' }
+  ];
+  function patientName(id) {
+    var p = PATIENTS.find(function (x) { return x.id === id; });
+    return p ? p.name : (id || '—');
+  }
+
+  var MEMBERS = [
+    { patientId: 'P001', cardNo: 'VIP 8802 3361', balance: 1280, points: 2360, shopId: 'S1' },
+    { patientId: 'P002', cardNo: 'VIP 8802 4102', balance: 0,    points: 120,  shopId: 'S1' },
+    { patientId: 'P004', cardNo: 'VIP 8801 7735', balance: 3600, points: 5820, shopId: 'S2' },
+    { patientId: 'P006', cardNo: 'VIP 8803 2290', balance: 860,  points: 940,  shopId: 'S3' }
+  ];
+
+  var APPOINTMENTS = [
+    { id: 'AP001', patientId: 'P001', name: '陈女士',   shopId: 'S1', date: '2026-11-16', time: '09:00-10:00', doctorId: 'D01', item: '口腔检查',     status: '已预约', chair: '3 号牙椅', source: '小程序' },
+    { id: 'AP002', patientId: 'P002', name: '刘先生',   shopId: 'S1', date: '2026-11-14', time: '09:30-10:30', doctorId: 'D01', item: '超声波洁牙',   status: '已就诊', chair: '1 号牙椅', source: '电话' },
+    { id: 'AP003', patientId: 'P003', name: '周小朋友', shopId: 'S1', date: '2026-11-14', time: '10:00-11:00', doctorId: 'D04', item: '窝沟封闭',     status: '待到诊', chair: '2 号牙椅', source: '小程序' },
+    { id: 'AP004', patientId: 'P004', name: '赵女士',   shopId: 'S2', date: '2026-11-14', time: '14:00-15:00', doctorId: 'D02', item: '根管治疗（后牙）', status: '已预约', chair: '1 号牙椅', source: '小程序' },
+    { id: 'AP005', patientId: 'P005', name: '孙先生',   shopId: 'S2', date: '2026-11-15', time: '10:30-11:30', doctorId: 'D02', item: '树脂充填',     status: '待到诊', chair: '4 号牙椅', source: '复诊预约' },
+    { id: 'AP006', patientId: 'P006', name: '何女士',   shopId: 'S3', date: '2026-11-17', time: '15:00-16:00', doctorId: 'D03', item: '隐形矫正复诊', status: '已预约', chair: '2 号牙椅', source: '小程序' }
+  ];
+
+  var SCHEDULES = [
+    { id: 'SC01', doctorId: 'D01', shopId: 'S1', date: '2026-11-14', period: '上午 08:30-12:00', total: 6, used: 4 },
+    { id: 'SC02', doctorId: 'D01', shopId: 'S1', date: '2026-11-16', period: '下午 14:00-17:30', total: 7, used: 2 },
+    { id: 'SC03', doctorId: 'D04', shopId: 'S1', date: '2026-11-14', period: '上午 08:30-12:00', total: 5, used: 2 },
+    { id: 'SC04', doctorId: 'D02', shopId: 'S2', date: '2026-11-14', period: '上午 08:30-12:00', total: 6, used: 5 },
+    { id: 'SC05', doctorId: 'D03', shopId: 'S3', date: '2026-11-17', period: '下午 14:00-17:30', total: 6, used: 3 }
+  ];
+  var SLOTS = [
+    { id: 'SL01', shopId: 'S1', doctorId: 'D01', date: '2026-11-16', time: '09:00-10:00', left: 2, status: '可约' },
+    { id: 'SL02', shopId: 'S1', doctorId: 'D01', date: '2026-11-16', time: '10:00-11:00', left: 0, status: '已满' },
+    { id: 'SL03', shopId: 'S1', doctorId: 'D01', date: '2026-11-16', time: '14:00-15:00', left: 3, status: '可约' },
+    { id: 'SL04', shopId: 'S2', doctorId: 'D02', date: '2026-11-15', time: '10:30-11:30', left: 1, status: '可约' },
+    { id: 'SL05', shopId: 'S3', doctorId: 'D03', date: '2026-11-17', time: '15:00-16:00', left: 4, status: '可约' }
+  ];
+  var CHAIRS = [
+    { id: 'C01', shopId: 'S1', no: '1 号牙椅', status: '占用', patient: '刘先生' },
+    { id: 'C02', shopId: 'S1', no: '2 号牙椅', status: '占用', patient: '周小朋友' },
+    { id: 'C03', shopId: 'S1', no: '3 号牙椅', status: '空闲', patient: '' },
+    { id: 'C04', shopId: 'S1', no: '4 号牙椅', status: '空闲', patient: '' },
+    { id: 'C05', shopId: 'S2', no: '1 号牙椅', status: '占用', patient: '赵女士' },
+    { id: 'C06', shopId: 'S2', no: '2 号牙椅', status: '空闲', patient: '' },
+    { id: 'C07', shopId: 'S3', no: '1 号牙椅', status: '空闲', patient: '' }
+  ];
+
+  var BILLS = [
+    { id: 'CS001', billNo: 'CS20261114001', patientId: 'P001', name: '陈女士', shopId: 'S1', item: '口腔检查 + 全景片', amount: 180,  status: '待支付', payMethod: '',       doctorId: 'D01', date: '2026-11-14', receipt: '' },
+    { id: 'CS002', billNo: 'CS20261114002', patientId: 'P001', name: '陈女士', shopId: 'S1', item: '超声波洁牙',       amount: 320,  status: '待支付', payMethod: '',       doctorId: 'D01', date: '2026-11-14', receipt: '' },
+    { id: 'CS003', billNo: 'CS20261108001', patientId: 'P001', name: '陈女士', shopId: 'S1', item: '根管治疗（前牙）', amount: 980,  status: '已收款', payMethod: '微信',   doctorId: 'D01', date: '2026-11-08', receipt: 'RCP20261108001' },
+    { id: 'CS004', billNo: 'CS20261114003', patientId: 'P002', name: '刘先生', shopId: 'S1', item: '窝沟封闭',         amount: 260,  status: '待收费', payMethod: '',       doctorId: 'D01', date: '2026-11-14', receipt: '' },
+    { id: 'CS005', billNo: 'CS20261114004', patientId: 'P004', name: '赵女士', shopId: 'S2', item: '根管治疗（后牙）', amount: 1680, status: '已收款', payMethod: '支付宝', doctorId: 'D02', date: '2026-11-14', receipt: 'RCP20261114004' },
+    { id: 'CS006', billNo: 'CS20261115001', patientId: 'P005', name: '孙先生', shopId: 'S2', item: '树脂充填',         amount: 420,  status: '待收费', payMethod: '',       doctorId: 'D02', date: '2026-11-15', receipt: '' },
+    { id: 'CS007', billNo: 'CS20261117001', patientId: 'P006', name: '何女士', shopId: 'S3', item: '隐形矫正复诊',     amount: 1200, status: '已收款', payMethod: '微信',   doctorId: 'D03', date: '2026-11-17', receipt: 'RCP20261117001' }
+  ];
+
+  var CONSUMABLES = [
+    { id: 'M01', shopId: 'S1', name: '一次性口腔器械盒', stock: 128, safe: 50, unit: '盒', supplier: '长沙康齿器械', price: 12.5 },
+    { id: 'M02', shopId: 'S1', name: '树脂充填材料',     stock: 18,  safe: 30, unit: '支', supplier: '长沙康齿器械', price: 86 },
+    { id: 'M03', shopId: 'S1', name: '种植体（韩系）',   stock: 9,   safe: 12, unit: '枚', supplier: '湖南齿科材料', price: 780 },
+    { id: 'M04', shopId: 'S2', name: '一次性口腔器械盒', stock: 64,  safe: 50, unit: '盒', supplier: '长沙康齿器械', price: 12.5 },
+    { id: 'M05', shopId: 'S2', name: '医用手套 M 码',    stock: 22,  safe: 80, unit: '副', supplier: '湖南齿科材料', price: 1.8 },
+    { id: 'M06', shopId: 'S3', name: '正畸弓丝',         stock: 140, safe: 40, unit: '根', supplier: '湖南齿科材料', price: 24 }
+  ];
+  var CONSUME_LOGS = [
+    { id: 'CL01', shopId: 'S1', item: '树脂充填材料', qty: 2, date: '2026-11-14', by: '林晓' },
+    { id: 'CL02', shopId: 'S2', item: '医用手套 M 码', qty: 10, date: '2026-11-14', by: '何静' }
+  ];
+  var PURCHASES = [
+    { id: 'PU01', shopId: 'S1', item: '树脂充填材料', qty: 40, supplier: '长沙康齿器械', status: '已入库', date: '2026-11-10', by: '林晓' },
+    { id: 'PU02', shopId: 'S2', item: '医用手套 M 码', qty: 200, supplier: '湖南齿科材料', status: '待入库', date: '2026-11-14', by: '何静' }
+  ];
+
+  var RECORDS = [
+    { id: 'TR001', patientId: 'P001', name: '陈女士',   shopId: 'S1', doctorId: 'D01', tooth: '36', chief: '左下后牙冷热刺激痛', diagnosis: '牙髓炎',     treatment: '开髓引流 + 根管预备',        allergy: '青霉素过敏', imaging: '全景片 2026-11-08', date: '2026-11-14' },
+    { id: 'TR002', patientId: 'P002', name: '刘先生',   shopId: 'S1', doctorId: 'D01', tooth: '16', chief: '牙龈出血',         diagnosis: '慢性龈炎',   treatment: '超声波洁牙 + 口腔卫生指导',  allergy: '无',         imaging: '—',                  date: '2026-11-14' },
+    { id: 'TR003', patientId: 'P004', name: '赵女士',   shopId: 'S2', doctorId: 'D02', tooth: '46', chief: '咬合痛一周',       diagnosis: '根尖周炎',   treatment: '根管治疗（后牙）',           allergy: '无',         imaging: '根尖片 2026-11-14',  date: '2026-11-14' },
+    { id: 'TR004', patientId: 'P001', name: '陈女士',   shopId: 'S2', doctorId: 'D02', tooth: '26', chief: '他店复诊：补牙材料脱落', diagnosis: '充填体脱落', treatment: '重新树脂充填', allergy: '青霉素过敏', imaging: '根尖片 2026-09-02', date: '2026-09-02' },
+    { id: 'TR005', patientId: 'P006', name: '何女士',   shopId: 'S3', doctorId: 'D03', tooth: '11', chief: '矫正复诊',         diagnosis: '安氏Ⅱ类错𬌗', treatment: '更换弓丝',                   allergy: '碘过敏',     imaging: '头颅侧位片 2026-08-20', date: '2026-11-17' }
+  ];
+
+  var RETURN_VISITS = [
+    { id: 'RV01', patientId: 'P001', name: '陈女士', shopId: 'S1', type: 'VIP 电话回访', planDate: '2026-11-15', result: '', status: '待回访' },
+    { id: 'RV02', patientId: 'P004', name: '赵女士', shopId: 'S2', type: 'VIP 电话回访', planDate: '2026-11-18', result: '', status: '待回访' },
+    { id: 'RV03', patientId: 'P006', name: '何女士', shopId: 'S3', type: '常规回访',   planDate: '2026-11-20', result: '', status: '待回访' }
+  ];
+  var FEEDBACKS = [
+    { id: 'FB01', patientId: 'P001', shopId: 'S1', date: '2026-11-09', content: '洁牙后牙龈无明显不适，医生讲解很耐心。', reply: '感谢反馈，已为您安排 3 个月后复诊提醒。' },
+    { id: 'FB02', patientId: 'P004', shopId: 'S2', date: '2026-11-11', content: '候诊时间比之前短了很多。', reply: '' }
+  ];
+
+  var AUDITS = [
+    { id: 'A01', shopId: 'S1', income: 286430, cost: 96120, diff: 0,   status: '已核查', month: '2026-10' },
+    { id: 'A02', shopId: 'S2', income: 193880, cost: 71540, diff: 120, status: '待核查', month: '2026-10' },
+    { id: 'A03', shopId: 'S3', income: 164250, cost: 62310, diff: 0,   status: '已核查', month: '2026-10' }
+  ];
+  /* 绩效工资数据：长沙方寸口腔口径，2026-08 / 09 / 10 三个月
+     医生：基本工资 + 创收阶梯提成(10万以下15%/10-15万18%/15万以上20%) + 专项奖 + 满意度奖 + 全勤奖
+     前台：基本工资 + 接待提成(12元/人次) + 转化奖 + 全勤奖
+     扣减：养老8% 医疗2% 失业0.3% 公积金12%（工伤/生育个人不缴），个税按5000起征简化计算 */
+  var PERFORMANCE = [
+    { id: 'PF01', doctorId: 'D01', name: '张明远', shopId: 'S1', month: '2026-10', visits: 186, income: 148600, score: 96, grade: 'A', base: 6000,  specialty: 2000, full: 300, satisfaction: 800,  tax: 1580 },
+    { id: 'PF01m9', doctorId: 'D01', name: '张明远', shopId: 'S1', month: '2026-09', visits: 172, income: 132400, score: 94, grade: 'A', base: 6000,  specialty: 1500, full: 300, satisfaction: 0,    tax: 1210 },
+    { id: 'PF01m8', doctorId: 'D01', name: '张明远', shopId: 'S1', month: '2026-08', visits: 161, income: 119800, score: 92, grade: 'A', base: 6000,  specialty: 1000, full: 300, satisfaction: 0,    tax:  950 },
+    { id: 'PF02', doctorId: 'D02', name: '李思颖', shopId: 'S2', month: '2026-10', visits: 164, income: 112300, score: 92, grade: 'A', base: 5000,  specialty: 1200, full: 300, satisfaction: 0,    tax:  780 },
+    { id: 'PF02m9', doctorId: 'D02', name: '李思颖', shopId: 'S2', month: '2026-09', visits: 158, income: 105600, score: 90, grade: 'A', base: 5000,  specialty: 1000, full: 300, satisfaction: 0,    tax:  640 },
+    { id: 'PF02m8', doctorId: 'D02', name: '李思颖', shopId: 'S2', month: '2026-08', visits: 149, income:  96800, score: 89, grade: 'B', base: 5000,  specialty:  800, full: 300, satisfaction: 0,    tax:  510 },
+    { id: 'PF03', doctorId: 'D03', name: '王浩然', shopId: 'S3', month: '2026-10', visits: 132, income:  98700, score: 87, grade: 'B', base: 5000,  specialty:  600, full: 300, satisfaction: 0,    tax:  410 },
+    { id: 'PF03m9', doctorId: 'D03', name: '王浩然', shopId: 'S3', month: '2026-09', visits: 126, income:  91200, score: 85, grade: 'B', base: 5000,  specialty:  500, full: 300, satisfaction: 0,    tax:  330 },
+    { id: 'PF03m8', doctorId: 'D03', name: '王浩然', shopId: 'S3', month: '2026-08', visits: 118, income:  85600, score: 84, grade: 'B', base: 5000,  specialty:  400, full: 300, satisfaction: 0,    tax:  260 },
+    { id: 'PF04', doctorId: 'D04', name: '陈静怡', shopId: 'S1', month: '2026-10', visits: 118, income:  76200, score: 89, grade: 'B', base: 5000,  specialty:  500, full: 300, satisfaction: 0,    tax:  190 },
+    { id: 'PF04m9', doctorId: 'D04', name: '陈静怡', shopId: 'S1', month: '2026-09', visits: 110, income:  70400, score: 87, grade: 'B', base: 5000,  specialty:  400, full: 300, satisfaction: 0,    tax:  130 },
+    { id: 'PF04m8', doctorId: 'D04', name: '陈静怡', shopId: 'S1', month: '2026-08', visits: 104, income:  65800, score: 86, grade: 'B', base: 5000,  specialty:  300, full: 300, satisfaction: 0,    tax:   90 }
+  ];
+  var STAFF_PERF = [
+    { id: 'SPF01',  workerId: 'reception', name: '林晓', shopId: 'S1', month: '2026-10', receptions: 412, score: 94, grade: 'A', base: 4000, convert: 900, full: 200, tax: 95 },
+    { id: 'SPF01m9', workerId: 'reception', name: '林晓', shopId: 'S1', month: '2026-09', receptions: 388, score: 92, grade: 'A', base: 4000, convert: 750, full: 200, tax: 70 },
+    { id: 'SPF01m8', workerId: 'reception', name: '林晓', shopId: 'S1', month: '2026-08', receptions: 365, score: 90, grade: 'A', base: 4000, convert: 600, full: 200, tax: 50 },
+    { id: 'SPF02',  workerId: 'S2desk',    name: '何静', shopId: 'S2', month: '2026-10', receptions: 368, score: 91, grade: 'A', base: 4000, convert: 700, full: 200, tax: 65 },
+    { id: 'SPF02m9', workerId: 'S2desk',    name: '何静', shopId: 'S2', month: '2026-09', receptions: 350, score: 89, grade: 'B', base: 4000, convert: 600, full: 200, tax: 45 },
+    { id: 'SPF02m8', workerId: 'S2desk',    name: '何静', shopId: 'S2', month: '2026-08', receptions: 332, score: 88, grade: 'B', base: 4000, convert: 500, full: 200, tax: 30 },
+    { id: 'SPF03',  workerId: 'S3desk',    name: '郑楠', shopId: 'S3', month: '2026-10', receptions: 296, score: 88, grade: 'B', base: 4000, convert: 500, full: 200, tax: 25 },
+    { id: 'SPF03m9', workerId: 'S3desk',    name: '郑楠', shopId: 'S3', month: '2026-09', receptions: 281, score: 86, grade: 'B', base: 4000, convert: 450, full: 200, tax: 15 },
+    { id: 'SPF03m8', workerId: 'S3desk',    name: '郑楠', shopId: 'S3', month: '2026-08', receptions: 268, score: 85, grade: 'B', base: 4000, convert: 400, full: 200, tax: 10 }
+  ];
+  /* 工资计算：返回 {incomeItems, deductItems, gross, social, tax, net} */
+  function commissionOf(inc) { return Math.round(inc * (inc < 100000 ? 0.15 : inc < 150000 ? 0.18 : 0.20)); }
+  function payrollOf(p, isDoctor) {
+    var items = [], gross = 0;
+    items.push(['基本工资', p.base, '岗位底薪']);
+    if (isDoctor) {
+      var comm = commissionOf(p.income || 0);
+      items.push(['创收阶梯提成', comm, '创收 ' + money(p.income || 0) + ' × ' + (p.income < 100000 ? '15%' : p.income < 150000 ? '18%' : '20%') + '（仅按创收计提一次）']);
+      if (p.specialty) items.push(['专项技术奖', p.specialty, '种植 / 正畸 / 修复专项']);
+      if (p.satisfaction) items.push(['满意度奖', p.satisfaction, '评分 ≥ 95 分']);
+    } else {
+      items.push(['接待提成', Math.round((p.receptions || 0) * 12), (p.receptions || 0) + ' 人次 × ¥12/人次']);
+      items.push(['转化奖', p.convert || 0, '复诊预约 / 会员办卡转化']);
+    }
+    items.push(['全勤奖', p.full || 0, '当月无迟到早退']);
+    gross = items.reduce(function (a, x) { return a + x[1]; }, 0);
+    var pension = Math.round(gross * 0.08), medical = Math.round(gross * 0.02),
+        unemployed = Math.round(gross * 0.003), fund = Math.round(gross * 0.12);
+    var deduct = [
+      ['养老保险（个人 8%）', pension], ['医疗保险（个人 2%）', medical],
+      ['失业保险（个人 0.3%）', unemployed],
+      ['工伤 / 生育保险', 0], ['住房公积金（个人 12%）', fund],
+      ['个人所得税', p.tax || 0]
+    ];
+    var social = pension + medical + unemployed + fund;
+    return { items: items, deduct: deduct, gross: gross, social: social, tax: p.tax || 0, net: gross - social - (p.tax || 0) };
+  }
+
+  var CROSS_REQUESTS = [
+    { id: 'CR002', patientId: 'P004', name: '赵先生', fromShopId: 'S2', toShopId: 'S1', doctorId: 'D01', reason: '复诊核对本店初诊记录（待前台授权演示）', status: '待授权', createdAt: '2026-11-22 11:00', expireAt: '', approvedBy: '' },
+    { id: 'CR000', patientId: 'P001', name: '陈女士', fromShopId: 'S1', toShopId: 'S2', doctorId: 'D01', reason: '复诊需核对藏珑店初诊充填记录（授权演示）', status: '已授权', createdAt: '2026-11-20 10:00', expireAt: '2026-12-27 10:00', approvedBy: '前台-林晓' },
+    { id: 'CR001', patientId: 'P001', name: '陈女士', fromShopId: 'S1', toShopId: 'S2', doctorId: 'D01', reason: '患者自述曾在藏珑店补牙，需核对既往充填记录', status: '待授权', createdAt: '2026-11-14 09:20', expireAt: '', approvedBy: '' }
+  ];
+
+  /* 模块与可见的业务人员（all = 总后台全量视图） */
+  var NAV = [
+    { path: 'dashboard',    label: '工作台',       roles: ['all', 'reception', 'doctor', 'hq'], group: '' },
+    { path: 'patients',     label: '患者档案',     roles: ['all', 'reception', 'doctor'],      group: '预约与诊前' },
+    { path: 'appointments', label: '预约管理',     roles: ['all', 'reception', 'doctor'],      group: '预约与诊前' },
+    { path: 'schedules',    label: '医生排班',     roles: ['all', 'reception', 'doctor'],      group: '预约与诊前' },
+    { path: 'slots',        label: '号源管理',     roles: ['all', 'reception'],                group: '预约与诊前' },
+    { path: 'chairs',       label: '牙椅管理',     roles: ['all', 'reception'],                group: '预约与诊前' },
+    { path: 'records',      label: '电子病历',     roles: ['all', 'doctor'],                   group: '诊疗与病历' },
+    { path: 'billing',      label: '收费与收据',   roles: ['all', 'reception'],                group: '收费与会员' },
+    { path: 'members',      label: '会员与积分',   roles: ['all', 'reception'],                group: '收费与会员' },
+    { path: 'revisit',      label: '复诊与回访',   roles: ['all', 'reception'],                group: '耗材与回访' },
+    { path: 'inventory',    label: '耗材库存',     roles: ['all', 'reception'],                group: '耗材与回访' },
+    { path: 'purchase',     label: '补货入库',     roles: ['all', 'reception'],                group: '耗材与回访' },
+    { path: 'cross',        label: '跨店调阅',     roles: ['all', 'reception', 'doctor'],      group: '经营与管理' },
+    { path: 'myPerf',       label: '我的绩效',     roles: ['reception', 'doctor'],             group: '经营与管理' },
+    { path: 'audit',        label: '月末费用核查', roles: ['all', 'hq'],                       group: '经营与管理' },
+    { path: 'performance',  label: '员工绩效',     roles: ['all', 'hq'],                       group: '经营与管理' },
+    { path: 'shops',        label: '门店管理',     roles: ['all', 'hq'],                       group: '经营与管理' },
+    { path: 'logs',         label: '访问日志',     roles: ['all', 'hq'],                       group: '经营与管理' },
+    { path: 'settings',     label: '系统设置',     roles: ['all'],                             group: '经营与管理' }
+  ];
+
+  var KEY = 'clouddent_clinic_v1';
+  var state = null;
+  function fresh() {
+    return {
+      appointments: JSON.parse(JSON.stringify(APPOINTMENTS)),
+      schedules: JSON.parse(JSON.stringify(SCHEDULES)),
+      slots: JSON.parse(JSON.stringify(SLOTS)),
+      chairs: JSON.parse(JSON.stringify(CHAIRS)),
+      bills: JSON.parse(JSON.stringify(BILLS)),
+      consumables: JSON.parse(JSON.stringify(CONSUMABLES)),
+      consumeLogs: JSON.parse(JSON.stringify(CONSUME_LOGS)),
+      purchases: JSON.parse(JSON.stringify(PURCHASES)),
+      records: JSON.parse(JSON.stringify(RECORDS)),
+      returnVisits: JSON.parse(JSON.stringify(RETURN_VISITS)),
+      feedbacks: JSON.parse(JSON.stringify(FEEDBACKS)),
+      audits: JSON.parse(JSON.stringify(AUDITS)),
+      crossRequests: JSON.parse(JSON.stringify(CROSS_REQUESTS)),
+      accessLogs: []
+    };
+  }
+  var BACKEND_OK = false;
+  function load() {
+    // 优先从云端 PostgreSQL 拉取单一数据源；离线(file://或后端故障)自动回退本地
+    try {
+      if (location.protocol.indexOf('http') === 0 && window.XMLHttpRequest) {
+        var x = new XMLHttpRequest();
+        x.open('GET', '/api/state', false);
+        x.setRequestHeader('Accept', 'application/json');
+        x.send(null);
+        if (x.status === 200) {
+          var r = JSON.parse(x.responseText);
+          if (r.ok && r.state && Object.keys(r.state).length > 0) {
+            state = r.state; BACKEND_OK = true;
+          } else if (r.ok) {
+            // 云端为空：把本地种子推上去初始化
+            var seed = null;
+            try { var raw = localStorage.getItem(KEY); seed = raw ? JSON.parse(raw) : null; } catch (e) {}
+            state = seed || fresh();
+            try { var p = new XMLHttpRequest(); p.open('PUT', '/api/state', true);
+              p.setRequestHeader('Content-Type', 'application/json');
+              p.send(JSON.stringify({ state: state })); } catch (e) {}
+            BACKEND_OK = true;
+          }
+        }
+      }
+    } catch (e) { BACKEND_OK = false; }
+    if (!state) {
+      try { var raw2 = localStorage.getItem(KEY); state = raw2 ? JSON.parse(raw2) : fresh(); }
+      catch (e2) { state = fresh(); }
+    }
+    return state;
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    if (BACKEND_OK && location.protocol.indexOf('http') === 0) {
+      try { var p = new XMLHttpRequest(); p.open('PUT', '/api/state', true);
+        p.setRequestHeader('Content-Type', 'application/json');
+        var tk = ''; try { tk = localStorage.getItem('clouddent_token') || ''; } catch (e) {}
+        if (tk) p.setRequestHeader('Authorization', 'Bearer ' + tk);
+        p.send(JSON.stringify({ state: state })); } catch (e) {}
+    }
+  }
+  function reset() { state = fresh(); save(); return state; }
+  function log(action, detail, user, patientId, shopId) {
+    state.accessLogs.unshift({
+      id: 'LG' + String(state.accessLogs.length + 1).padStart(3, '0'),
+      time: new Date().toLocaleString('zh-CN', { hour12: false }),
+      worker: user ? user.name : '系统',
+      view: user ? user.label : '',
+      action: action, detail: detail,
+      patientId: patientId || '', shopId: shopId || (user ? user.shopId : '')
+    });
+    save();
+  }
+  function uid(p) { return p + Date.now().toString().slice(-6) + Math.floor(Math.random() * 90 + 10); }
+  function money(n) { return '¥' + Number(n || 0).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  window.CD = {
+    SHOPS: SHOPS, shopName: shopName, ACCOUNT: ACCOUNT, STAFF: STAFF,
+    DOCTORS: DOCTORS, doctorName: doctorName, SERVICES: SERVICES,
+    PATIENTS: PATIENTS, patientName: patientName, MEMBERS: MEMBERS,
+    PERFORMANCE: PERFORMANCE, STAFF_PERF: STAFF_PERF, NAV: NAV, PAYROLL: payrollOf,
+    get state() { return state || load(); },
+    get backendOK() { return BACKEND_OK; },
+    load: load, save: save, reset: reset, log: log, uid: uid, money: money
+  };
+})();
+
+</script>
+  <script>
+/* 云齿通 CloudDent · 方寸口腔连锁门诊管理系统 —— 总后台与业务工作台 */
+(function () {
+  'use strict';
+  var D = window.CD;
+  D.load();
+  var SESSION_KEY = 'clouddent_clinic_session';
+  var currentUser = null, staffKey = 'all', currentShop = 'ALL';
+  /* 侧栏分组的折叠状态：记忆在本地，下次进入沿用 */
+  var NAV_FOLD_KEY = 'clouddent_nav_folded';
+  var navFolded = {};
+  try { navFolded = JSON.parse(localStorage.getItem(NAV_FOLD_KEY) || '{}') || {}; } catch (e) { navFolded = {}; }
+
+  function st() { return D.state; }
+  function $(s) { return document.querySelector(s); }
+  function $$(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function money(n) { return D.money(n); }
+  function shop(id) { return D.shopName(id); }
+  function now() { return new Date().toLocaleString('zh-CN', { hour12: false }); }
+  function byId(list, id) { return (list || []).find(function (x) { return x.id === id; }); }
+  function val(id) { var e = document.getElementById(id); return e ? String(e.value).trim() : ''; }
+
+  /* ---------- UI 片段 ---------- */
+  function pageHead(title, sub) {
+    return '<div class="page-head"><div><h2>' + esc(title) + '</h2><div class="sub">' + esc(sub || '') + '</div></div></div>';
+  }
+  function card(title, body) { return '<div class="card"><div class="card-title">' + title + '</div>' + body + '</div>'; }
+  function table(heads, rows, empty) {
+    var h = '<table class="tbl"><thead><tr>' + heads.map(function (x) { return '<th>' + x + '</th>'; }).join('') + '</tr></thead><tbody>';
+    if (!rows.length) return h + '<tr><td colspan="' + heads.length + '" class="empty">' + esc(empty || '暂无数据') + '</td></tr></tbody></table>';
+    return h + rows.join('') + '</tbody></table>';
+  }
+  function statGrid(items) {
+    return '<div class="stat-grid">' + items.map(function (x) {
+      return '<div class="stat-card"><div><div class="stat-label">' + esc(x[0]) + '</div>' +
+        '<div class="stat-value" style="color:' + (x[2] || '#0f766e') + '">' + esc(x[1]) + '</div></div></div>';
+    }).join('') + '</div>';
+  }
+  function tag(t, k) { return '<span class="tag ' + (k || 'tag-info') + '">' + esc(t) + '</span>'; }
+  function btn(act, id, label, kind) {
+    return '<button class="btn btn-sm ' + (kind || 'btn-primary') + '" data-act="' + act + '" data-id="' + esc(id || '') + '">' + esc(label) + '</button>';
+  }
+  function field(label, inner) { return '<div class="form-item"><label>' + esc(label) + '</label>' + inner + '</div>'; }
+  function input(id, ph, type) {
+    return '<input class="inp" id="' + id + '" type="' + (type || 'text') + '" placeholder="' + esc(ph || '') + '">';
+  }
+  function select(id, opts, placeholder) {
+    var body = opts.map(function (o) {
+      var v = typeof o === 'string' ? o : o.v, t = typeof o === 'string' ? o : o.t;
+      return '<option value="' + esc(v) + '">' + esc(t) + '</option>';
+    }).join('');
+    return '<select class="inp" id="' + id + '">' +
+      (placeholder ? '<option value="">' + esc(placeholder) + '</option>' : '') + body + '</select>';
+  }
+  function formGrid(inner) { return '<div class="form-grid">' + inner + '</div>'; }
+  function toast(msg, warn) {
+    var el = $('#toast');
+    if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); }
+    el.textContent = msg;
+    el.style.borderColor = warn ? '#f59e0b' : '#0f766e';
+    el.style.display = 'block';
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.style.display = 'none'; }, 2200);
+  }
+  function detail(html) { var e = $('#detail'); if (e) { e.innerHTML = html ? card('详细信息', html) : '';
+    if (html) setTimeout(function(){ if (e.scrollIntoView) e.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 60); } }
+
+  /* ---------- 数据可见范围 ---------- */
+  function vis(list, doctorOnly) {
+    var u = currentUser, out = (list || []).slice();
+    if (!u) return [];
+    if (u.role === 'reception') out = out.filter(function (x) { return x.shopId === u.shopId; });
+    else if (u.role === 'doctor') {
+      out = out.filter(function (x) { return x.shopId === u.shopId; });
+      if (doctorOnly) out = out.filter(function (x) { return !x.doctorId || x.doctorId === u.doctorId; });
+    } else if (u.role === 'all' && currentShop !== 'ALL') {
+      out = out.filter(function (x) { return !x.shopId || x.shopId === currentShop; });
+    }
+    return out;
+  }
+  function myPatients() {
+    return D.PATIENTS.filter(function (p) {
+      return currentUser.role !== 'doctor' || (p.shopId === currentUser.shopId && p.doctorId === currentUser.doctorId);
+    });
+  }
+  function can(route) {
+    var n = D.NAV.find(function (x) { return x.path === route; });
+    return !!n && n.roles.indexOf(currentUser.role) >= 0;
+  }
+  function rerender() { D.save(); render(); }
+
+  /* ---------- 登录 / 业务人员切换 ---------- */
+  function setStaff(key, saveIt) {
+    var s = D.STAFF[key] || D.STAFF.all;
+    staffKey = key;
+    currentUser = {
+      username: D.ACCOUNT.username, name: s.name, label: s.label, role: s.role,
+      shopId: s.shopId, doctorId: s.doctorId || '', patientId: ''
+    };
+    if (saveIt !== false) {
+      try { localStorage.setItem(SESSION_KEY, JSON.stringify({ staff: key })); } catch (e) {}
+    }
+    D.log('进入工作视图', s.label + ' · ' + shop(s.shopId), currentUser);
+  }
+  function doLogin(u, p) {
+    if (u !== D.ACCOUNT.username || p !== D.ACCOUNT.password) { toast('账号或密码错误', true); return false; }
+    setStaff('all');
+    // v3：http 环境同步调 /api/login 取 Bearer token（本地 file:// 跳过）
+    try {
+      if (location.protocol.indexOf('http') === 0 && window.XMLHttpRequest) {
+        var lg = new XMLHttpRequest();
+        lg.open('POST', '/api/login', false);
+        lg.setRequestHeader('Content-Type', 'application/json');
+        lg.send(JSON.stringify({ role: 'admin', username: u, password: p }));
+        if (lg.status === 200) {
+          var lr = JSON.parse(lg.responseText);
+          if (lr.ok && lr.token) localStorage.setItem('clouddent_token', lr.token);
+        }
+      }
+    } catch (e) {}
+    return true;
+  }
+  function doLogout() {
+    D.log('退出登录', '', currentUser);
+    currentUser = null;
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+    location.hash = '';
+    renderShell();
+  }
+  function restoreSession() {
+    try {
+      var raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      var k = JSON.parse(raw).staff;
+      if (D.STAFF[k]) setStaff(k, false);
+    } catch (e) {}
+  }
+
+  /* ---------- 视图 ---------- */
+  var V = {};
+
+  V.dashboard = function () {
+    var s = st(), u = currentUser;
+    var appts = vis(s.appointments, true), bills = vis(s.bills, true), cons = vis(s.consumables);
+    var income = bills.filter(function (x) { return x.status === '已收款'; })
+      .reduce(function (a, b) { return a + Number(b.amount || 0); }, 0);
+    var html = pageHead('工作台', shop(u.shopId) + ' · ' + u.label + ' · ' + now()) +
+      statGrid([
+        ['预约记录', appts.length + ' 条'],
+        ['待收款', bills.filter(function (x) { return x.status === '待收费' || x.status === '待支付'; }).length + ' 笔', '#d97706'],
+        ['库存预警', cons.filter(function (x) { return x.stock < x.safe; }).length + ' 项', '#dc2626'],
+        ['累计营收', money(income)]
+      ]) +
+      card('近期预约', table(['预约号', '患者', '门店', '日期 / 时段', '医生', '项目', '状态'],
+        appts.slice(0, 6).map(function (a) {
+          return '<tr><td>' + esc(a.id) + '</td><td><strong>' + esc(a.name) + '</strong></td><td>' + esc(shop(a.shopId)) + '</td>' +
+            '<td>' + esc(a.date) + ' ' + esc(a.time) + '</td><td>' + esc(D.doctorName(a.doctorId)) + '</td><td>' + esc(a.item) + '</td>' +
+            '<td>' + tag(a.status, a.status === '已预约' ? 'tag-ok' : 'tag-info') + '</td></tr>';
+        }), '暂无预约记录'));
+    if (u.role === 'all' || u.role === 'hq') {
+      html += card('门店经营概览', table(['门店', '本月收入', '本月成本', '核查差额', '核查状态'],
+        vis(s.audits).map(function (a) {
+          return '<tr><td><strong>' + esc(shop(a.shopId)) + '</strong></td><td>' + money(a.income) + '</td><td>' + money(a.cost) + '</td>' +
+            '<td>' + (a.diff ? '<span class="stock-low">差额 ' + money(a.diff) + '</span>' : '一致') + '</td>' +
+            '<td>' + tag(a.status, a.status === '已核查' ? 'tag-ok' : 'tag-warn') + '</td></tr>';
+        })));
+    }
+    if (u.role === 'doctor') {
+      html += card('我的患者', table(['档案号', '姓名', '过敏史', '会员等级'],
+        myPatients().map(function (p) {
+          return '<tr><td>' + esc(p.id) + '</td><td>' + esc(p.name) + '</td><td>' + esc(p.allergy) + '</td><td>' + esc(p.level) + '</td></tr>';
+        })));
+    }
+    if (u.role === 'reception' || u.role === 'all') {
+      html += card('待办事项', table(['事项', '内容', '状态'], [
+        ['预约到诊', '今日待到诊 ' + appts.filter(function (a) { return a.status === '待到诊'; }).length + ' 人次', '待处理'],
+        ['收费收款', '待收费 ' + bills.filter(function (b) { return b.status === '待收费' || b.status === '待支付'; }).length + ' 笔', '待处理'],
+        ['耗材补货', '低于安全库存 ' + cons.filter(function (c) { return c.stock < c.safe; }).length + ' 项', '待处理'],
+        ['回访任务', '待回访 ' + vis(s.returnVisits).filter(function (r) { return r.status === '待回访'; }).length + ' 条', '待处理']
+      ].map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td><td>' + tag(r[2], 'tag-warn') + '</td></tr>'; })));
+    }
+    return html;
+  };
+
+  V.patients = function () {
+    var list = myPatients().filter(function (p) {
+      return currentUser.role !== 'reception' || p.shopId === currentUser.shopId;
+    }).filter(function (p) {
+      return currentUser.role !== 'all' || currentShop === 'ALL' || p.shopId === currentShop;
+    });
+    var form = (currentUser.role === 'all' || currentUser.role === 'reception')
+      ? card('新建患者档案', formGrid(
+        field('姓名', input('pa-name', '请输入姓名')) +
+        field('联系电话', input('pa-phone', '请输入手机号')) +
+        field('过敏史', input('pa-allergy', '如：青霉素过敏')) +
+        field('所属门店', select('pa-shop', D.SHOPS.map(function (x) { return { v: x.id, t: x.name }; }))) +
+        field('会员等级', select('pa-level', ['普通', '银卡会员', '金卡会员']))
+      ) + '<div class="toolbar">' + btn('patient-add', '', '建立档案') + '</div>')
+      : '';
+    return pageHead('患者档案', '共 ' + list.length + ' 份档案 · ' + shop(currentUser.shopId)) +
+      form + card('档案列表', table(['档案号', '姓名', '性别 / 年龄', '联系电话', '过敏史', '建档门店', '会员等级', '主诊医生', '操作'],
+        list.map(function (p) {
+          return '<tr><td>' + esc(p.id) + '</td><td><strong>' + esc(p.name) + '</strong></td><td>' + esc(p.gender + ' / ' + p.age) + '</td>' +
+            '<td>' + esc(p.phone) + '</td><td>' + (p.allergy !== '无' ? tag(p.allergy, 'tag-warn') : '无') + '</td>' +
+            '<td>' + esc(shop(p.shopId)) + '</td><td>' + esc(p.level) + '</td><td>' + esc(D.doctorName(p.doctorId)) + '</td>' +
+            '<td class="op">' + btn('patient-view', p.id, '查看', 'btn-plain') + '</td></tr>';
+        }))) + '<div id="detail"></div>';
+  };
+
+  V.appointments = function () {
+    var s = st(), list = vis(s.appointments, true);
+    if (currentUser.role === 'doctor') list = list.filter(function (a) { return a.doctorId === currentUser.doctorId; });
+    var editable = currentUser.role === 'all' || currentUser.role === 'reception';
+    var form = editable ? card('新建预约', formGrid(
+      field('患者', select('ap-patient', D.PATIENTS.map(function (p) { return { v: p.id, t: p.name + ' · ' + shop(p.shopId) }; }), '请选择患者')) +
+      field('就诊门店', select('ap-shop', D.SHOPS.map(function (x) { return { v: x.id, t: x.name }; }))) +
+      field('主诊医生', select('ap-doc', D.DOCTORS.map(function (d) { return { v: d.id, t: d.name + ' · ' + d.dept }; }))) +
+      field('诊疗项目', select('ap-item', D.SERVICES.map(function (x) { return { v: x.name, t: x.name + ' ' + money(x.price) }; }))) +
+      field('预约日期', input('ap-date', '', 'date')) +
+      field('时段', input('ap-time', '如 09:00-10:00'))
+    ) + '<div class="toolbar">' + btn('appt-add', '', '提交预约') + '</div>') : '';
+    return pageHead('预约管理', '共 ' + list.length + ' 条预约 · ' + shop(currentUser.shopId)) + form +
+      card('预约列表', table(['预约号', '患者', '门店', '日期 / 时段', '医生', '项目', '牙椅', '来源', '状态', '操作'],
+        list.map(function (a) {
+          var op = '';
+          if (editable && a.status !== '已就诊' && a.status !== '已取消') {
+            op = btn('appt-arrive', a.id, '到诊') + btn('appt-cancel', a.id, '取消', 'btn-danger-plain');
+          }
+          return '<tr><td>' + esc(a.id) + '</td><td><strong>' + esc(a.name) + '</strong></td><td>' + esc(shop(a.shopId)) + '</td>' +
+            '<td>' + esc(a.date) + ' ' + esc(a.time) + '</td><td>' + esc(D.doctorName(a.doctorId)) + '</td><td>' + esc(a.item) + '</td>' +
+            '<td>' + esc(a.chair || '待分配') + '</td><td>' + esc(a.source) + '</td>' +
+            '<td>' + tag(a.status, a.status === '已取消' ? 'tag-bad' : (a.status === '已就诊' ? 'tag-info' : 'tag-ok')) + '</td>' +
+            '<td class="op">' + op + '</td></tr>';
+        })));
+  };
+
+  V.schedules = function () {
+    var s = st(), list = vis(s.schedules, true);
+    if (currentUser.role === 'doctor') list = list.filter(function (x) { return x.doctorId === currentUser.doctorId; });
+    var editable = currentUser.role === 'all' || currentUser.role === 'reception';
+    var form = editable ? card('新增排班', formGrid(
+      field('医生', select('sc-doc', D.DOCTORS.map(function (d) { return { v: d.id, t: d.name }; }))) +
+      field('门店', select('sc-shop', D.SHOPS.map(function (x) { return { v: x.id, t: x.name }; }))) +
+      field('日期', input('sc-date', '', 'date')) +
+      field('班次', select('sc-period', ['上午 08:30-12:00', '下午 14:00-17:30', '全天 08:30-17:30']))
+    ) + '<div class="toolbar">' + btn('sched-add', '', '保存排班') + '</div>') : '';
+    return pageHead('医生排班', '排班按医生与日期生成号源') + form +
+      card('排班列表', table(['医生', '门店', '日期', '班次', '号源总数', '已约', '操作'],
+        list.map(function (x) {
+          return '<tr><td><strong>' + esc(D.doctorName(x.doctorId)) + '</strong></td><td>' + esc(shop(x.shopId)) + '</td>' +
+            '<td>' + esc(x.date) + '</td><td>' + esc(x.period) + '</td><td>' + x.total + '</td><td>' + x.used + '</td>' +
+            '<td class="op">' + (editable ? btn('sched-gen', x.id, '生成号源') : '—') + '</td></tr>';
+        })));
+  };
+
+  V.slots = function () {
+    var list = vis(st().slots, true);
+    return pageHead('号源管理', '可约号源同步展示在患者小程序') +
+      card('号源列表', table(['号源编号', '门店', '医生', '日期', '时段', '剩余', '状态', '操作'],
+        list.map(function (x) {
+          return '<tr><td>' + esc(x.id) + '</td><td>' + esc(shop(x.shopId)) + '</td><td>' + esc(D.doctorName(x.doctorId)) + '</td>' +
+            '<td>' + esc(x.date) + '</td><td>' + esc(x.time) + '</td><td>' + x.left + '</td>' +
+            '<td>' + tag(x.status, x.status === '可约' ? 'tag-ok' : 'tag-bad') + '</td>' +
+            '<td class="op">' + btn('slot-toggle', x.id, x.status === '可约' ? '停用' : '启用', x.status === '可约' ? 'btn-danger-plain' : 'btn-primary') + '</td></tr>';
+        })));
+  };
+
+  V.chairs = function () {
+    var list = vis(st().chairs, true);
+    return pageHead('牙椅管理', '诊疗占用与释放实时更新') +
+      card('牙椅状态', table(['门店', '牙椅', '状态', '当前患者', '操作'],
+        list.map(function (x) {
+          return '<tr><td>' + esc(shop(x.shopId)) + '</td><td><strong>' + esc(x.no) + '</strong></td>' +
+            '<td>' + tag(x.status, x.status === '空闲' ? 'tag-ok' : 'tag-warn') + '</td><td>' + esc(x.patient || '—') + '</td>' +
+            '<td class="op">' + btn('chair-toggle', x.id, x.status === '空闲' ? '置为占用' : '释放', x.status === '空闲' ? 'btn-plain' : 'btn-primary') + '</td></tr>';
+        })));
+  };
+
+  V.records = function () {
+    var s = st(), list = vis(s.records, true);
+    if (currentUser.role === 'doctor') list = list.filter(function (x) { return x.doctorId === currentUser.doctorId; });
+    var editable = currentUser.role === 'all' || currentUser.role === 'doctor';
+    var form = editable ? card('书写诊疗记录', formGrid(
+      field('患者', select('rc-patient', myPatients().map(function (p) { return { v: p.id, t: p.name }; }), '请选择患者')) +
+      field('牙位', input('rc-tooth', '如 36')) +
+      field('主诉', input('rc-chief', '患者主诉')) +
+      field('诊断', input('rc-diag', '诊断结果')) +
+      field('处置', input('rc-treatment', '处置内容')) +
+      field('收费项目', select('rc-service', D.SERVICES.map(function (x) { return { v: x.id, t: x.name + ' ' + money(x.price) }; })))
+    ) + '<div class="toolbar">' + btn('rec-add', '', '保存并生成收费单') + '</div>') : '';
+    return pageHead('电子病历', '仅可查看与本人有诊疗关系的患者档案') + form +
+      card('诊疗记录', table(['记录号', '患者', '门店', '医生', '牙位', '诊断', '日期', '操作'],
+        list.map(function (r) {
+          return '<tr><td>' + esc(r.id) + '</td><td><strong>' + esc(r.name) + '</strong></td><td>' + esc(shop(r.shopId)) + '</td>' +
+            '<td>' + esc(D.doctorName(r.doctorId)) + '</td><td>' + esc(r.tooth) + '</td><td>' + esc(r.diagnosis) + '</td><td>' + esc(r.date) + '</td>' +
+            '<td class="op">' + btn('rec-view', r.id, '查看', 'btn-plain') + '</td></tr>';
+        }))) + '<div id="detail"></div>';
+  };
+
+  V.billing = function () {
+    var s = st(), list = vis(s.bills, true);
+    var form = card('新建收费单', formGrid(
+      field('患者', select('bl-patient', D.PATIENTS.map(function (p) { return { v: p.id, t: p.name }; }), '请选择患者')) +
+      field('收费项目', select('bl-service', D.SERVICES.map(function (x) { return { v: x.id, t: x.name + ' ' + money(x.price) }; }))) +
+      field('门店', select('bl-shop', D.SHOPS.map(function (x) { return { v: x.id, t: x.name }; })))
+    ) + '<div class="toolbar">' + btn('bill-add', '', '生成收费单') + '</div>');
+    return pageHead('收费与收据', '收款后自动生成电子收据') + form +
+      card('收费单据', table(['单号', '患者', '门店', '项目', '金额', '支付方式', '状态', '操作'],
+        list.map(function (b) {
+          var op = b.status === '已收款'
+            ? btn('bill-view', b.id, '收据', 'btn-plain')
+            : btn('bill-pay', b.id, '收款') ;
+          return '<tr><td>' + esc(b.billNo) + '</td><td><strong>' + esc(b.name) + '</strong></td><td>' + esc(shop(b.shopId)) + '</td>' +
+            '<td>' + esc(b.item) + '</td><td>' + money(b.amount) + '</td><td>' + esc(b.payMethod || '—') + '</td>' +
+            '<td>' + tag(b.status, b.status === '已收款' ? 'tag-ok' : 'tag-warn') + '</td><td class="op">' + op + '</td></tr>';
+        }))) +
+      '<div class="toolbar" style="margin-top:14px">收款方式 ' + select('pay-method', ['微信', '支付宝', '银行卡', '现金']) + '</div>' +
+      '<div id="detail"></div>';
+  };
+
+  V.members = function () {
+    var s = st(), list = vis(s.members, true);
+    return pageHead('会员与积分', '余额、积分与等级管理') +
+      card('会员账户', table(['会员卡号', '患者', '门店', '储值余额', '可用积分', '操作'],
+        list.map(function (m) {
+          return '<tr><td>' + esc(m.cardNo) + '</td><td><strong>' + esc(D.patientName(m.patientId)) + '</strong></td>' +
+            '<td>' + esc(shop(m.shopId)) + '</td><td>' + money(m.balance) + '</td><td>' + m.points + '</td>' +
+            '<td class="op">' + btn('member-redeem', m.patientId, '积分兑换', 'btn-plain') + '</td></tr>';
+        }))) +
+      card('患者反馈', table(['患者', '日期', '内容', '回复'],
+        vis(s.feedbacks, true).map(function (f) {
+          return '<tr><td>' + esc(D.patientName(f.patientId)) + '</td><td>' + esc(f.date) + '</td><td>' + esc(f.content) + '</td>' +
+            '<td>' + esc(f.reply || '待回复') + '</td></tr>';
+        }), '暂无反馈'));
+  };
+
+  V.revisit = function () {
+    var s = st(), list = vis(s.returnVisits, true);
+    return pageHead('复诊与回访', '回访任务与结果登记') +
+      card('回访任务', table(['任务号', '患者', '门店', '类型', '计划日期', '结果', '状态', '操作'],
+        list.map(function (r) {
+          return '<tr><td>' + esc(r.id) + '</td><td><strong>' + esc(r.name) + '</strong></td><td>' + esc(shop(r.shopId)) + '</td>' +
+            '<td>' + esc(r.type) + '</td><td>' + esc(r.planDate) + '</td><td>' + esc(r.result || '—') + '</td>' +
+            '<td>' + tag(r.status, r.status === '已回访' ? 'tag-ok' : 'tag-warn') + '</td>' +
+            '<td class="op">' + (r.status === '待回访' ? btn('revisit-done', r.id, '登记结果') : '—') + '</td></tr>';
+        })));
+  };
+
+  V.inventory = function () {
+    var s = st(), list = vis(s.consumables, true);
+    return pageHead('耗材库存', '低于安全库存自动预警') +
+      card('登记耗材消耗', formGrid(
+        field('耗材', select('iv-item', list.map(function (x) { return { v: x.id, t: x.name + '（' + shop(x.shopId) + '）' }; }))) +
+        field('数量', input('iv-qty', '消耗数量', 'number'))
+      ) + '<div class="toolbar">' + btn('consume-add', '', '登记消耗') + '</div>') +
+      card('库存台账', table(['耗材', '门店', '现有库存', '安全库存', '单位', '供应商', '状态'],
+        list.map(function (x) {
+          return '<tr><td><strong>' + esc(x.name) + '</strong></td><td>' + esc(shop(x.shopId)) + '</td>' +
+            '<td>' + x.stock + ' ' + esc(x.unit) + '</td><td>' + x.safe + '</td><td>' + esc(x.unit) + '</td><td>' + esc(x.supplier) + '</td>' +
+            '<td>' + (x.stock < x.safe ? tag('库存不足', 'tag-bad') : tag('正常', 'tag-ok')) + '</td></tr>';
+        }))) +
+      card('消耗明细', table(['耗材', '门店', '数量', '日期', '登记人'],
+        vis(s.consumeLogs, true).map(function (c) {
+          return '<tr><td>' + esc(c.item) + '</td><td>' + esc(shop(c.shopId)) + '</td><td>' + c.qty + '</td><td>' + esc(c.date) + '</td><td>' + esc(c.by) + '</td></tr>';
+        }), '暂无消耗记录'));
+  };
+
+  V.purchase = function () {
+    var s = st(), list = vis(s.consumables, true);
+    return pageHead('补货入库', '到货登记后自动增加库存') +
+      card('登记入库', formGrid(
+        field('耗材', select('pu-item', list.map(function (x) { return { v: x.id, t: x.name + '（' + shop(x.shopId) + '）' }; }))) +
+        field('数量', input('pu-qty', '入库数量', 'number')) +
+        field('供应商', input('pu-supplier', '供应商名称'))
+      ) + '<div class="toolbar">' + btn('purchase-add', '', '确认入库') + '</div>') +
+      card('入库记录', table(['单号', '门店', '耗材', '数量', '供应商', '日期', '登记人', '状态'],
+        vis(s.purchases, true).map(function (p) {
+          return '<tr><td>' + esc(p.id) + '</td><td>' + esc(shop(p.shopId)) + '</td><td>' + esc(p.item) + '</td><td>' + p.qty + '</td>' +
+            '<td>' + esc(p.supplier) + '</td><td>' + esc(p.date) + '</td><td>' + esc(p.by) + '</td>' +
+            '<td>' + tag(p.status, p.status === '已入库' ? 'tag-ok' : 'tag-warn') + '</td></tr>';
+        })));
+  };
+
+  V.cross = function () {
+    var s = st(), u = currentUser;
+    var list = s.crossRequests.filter(function (x) {
+      if (u.role === 'reception') return x.toShopId === u.shopId;
+      if (u.role === 'doctor') return x.doctorId === u.doctorId;
+      return true;
+    });
+    var html = pageHead('跨店调阅', '授权通过后仅可只读查看他店档案，全程留痕');
+    if (u.role === 'doctor' || u.role === 'all') {
+      html += card('发起调阅申请', formGrid(
+        field('患者', select('cr-patient', D.PATIENTS.map(function (p) { return { v: p.id, t: p.name }; }), '请选择患者')) +
+        field('目标门店', select('cr-shop', D.SHOPS.map(function (x) { return { v: x.id, t: x.name }; }))) +
+        field('调阅事由', input('cr-reason', '请填写调阅原因'))
+      ) + '<div class="toolbar">' + btn('cross-add', '', '提交申请') + '</div>');
+    }
+    html += card('调阅申请', table(['申请号', '患者', '申请门店', '目标门店', '事由', '申请时间', '状态', '操作'],
+      list.map(function (x) {
+        var op = '';
+        if (x.status === '待授权' && (u.role === 'reception' || u.role === 'all')) {
+          op = btn('cross-approve', x.id, '授权') + btn('cross-reject', x.id, '拒绝', 'btn-danger-plain');
+        } else if (x.status === '已授权' && u.role === 'doctor') {
+          op = btn('cross-view', x.id, '只读查看', 'btn-plain');
+        }
+        return '<tr><td>' + esc(x.id) + '</td><td><strong>' + esc(x.name) + '</strong></td>' +
+          '<td>' + esc(shop(x.fromShopId)) + '</td><td>' + esc(shop(x.toShopId)) + '</td><td>' + esc(x.reason) + '</td>' +
+          '<td>' + esc(x.createdAt) + '</td><td>' + tag(x.status, x.status === '已授权' ? 'tag-ok' : (x.status === '已拒绝' ? 'tag-bad' : 'tag-warn')) + '</td>' +
+          '<td class="op">' + (op || '—') + '</td></tr>';
+      }), '暂无调阅申请')) + '<div id="detail"></div>';
+    return html;
+  };
+
+  var perfMonth = '2026-10';
+  V.myPerf = function () {
+    var u = currentUser, isDoc = (u.role === 'doctor');
+    var cloudPerf = (CD.state && CD.state.performance) || [];
+    var cloudStaff = (CD.state && CD.state.staffPerf) || [];
+    var all = isDoc
+      ? (cloudPerf.length ? cloudPerf.filter(function (x) { return x.doctorId === u.doctorId; }) : D.PERFORMANCE.filter(function (x) { return x.doctorId === u.doctorId; }))
+      : (cloudStaff.length ? cloudStaff.filter(function (x) { return x.workerId === u.workerId || x.shopId === u.shopId; }) : D.STAFF_PERF.filter(function (x) { return x.workerId === u.workerId || x.shopId === u.shopId; }));
+    if (!all.length) all = isDoc ? D.PERFORMANCE.slice(0, 3) : D.STAFF_PERF.slice(0, 3);
+    var x = all.find(function (r) { return r.month === perfMonth; }) || all[0];
+    var pay = D.PAYROLL(x, isDoc);
+    D.log('查看本人绩效工资条', perfMonth + ' · 仅本人可见', u);
+    var months = ['2026-10', '2026-09', '2026-08'];
+    var bar = '<div class="perf-tabs">' + months.map(function (m) {
+      return '<button type="button" class="perf-tab' + (m === perfMonth ? ' active' : '') + '" data-act="perf-month" data-id="' + m + '">' + m + '</button>';
+    }).join('') + '</div>';
+    var stats = statGrid([
+      ['应发工资', money(pay.gross)],
+      ['五险一金（个人）', '−' + money(pay.social), '#d97706'],
+      ['个人所得税', '−' + money(pay.tax), '#d97706'],
+      ['实发工资', money(pay.net), '#0f766e']
+    ]);
+    var incRows = pay.items.map(function (it) {
+      return '<tr><td>' + esc(it[0]) + '</td><td>' + money(it[1]) + '</td><td class="muted">' + esc(it[2]) + '</td></tr>';
+    });
+    incRows.push('<tr class="sum-row"><td><strong>应发合计</strong></td><td><strong>' + money(pay.gross) + '</strong></td><td></td></tr>');
+    var decRows = pay.deduct.map(function (it) {
+      return '<tr><td>' + esc(it[0]) + '</td><td>' + (it[1] ? '−' + money(it[1]) : '¥0.00') + '</td></tr>';
+    });
+    decRows.push('<tr class="sum-row"><td><strong>五险一金小计</strong></td><td><strong>−' + money(pay.social) + '</strong></td></tr>');
+    decRows.push('<tr class="net-row"><td><strong>实发工资</strong></td><td><strong>' + money(pay.net) + '</strong></td></tr>');
+    var basis = card('本月绩效依据', table(['项目', '数值'], [
+      '<tr><td>接诊 / 接待量</td><td>' + (x.visits || x.receptions || 0) + ' 人次</td></tr>',
+      '<tr><td>' + (isDoc ? '创收额' : '所属门店') + '</td><td>' + (isDoc ? money(x.income || 0) : esc(shop(x.shopId))) + '</td></tr>',
+      '<tr><td>综合评分</td><td>' + (x.score || 0) + ' 分</td></tr>',
+      '<tr><td>绩效等级</td><td>' + tag((x.grade || '—') + ' 级', x.grade === 'A' ? 'tag-ok' : 'tag-info') + '</td></tr>'
+    ]));
+    return pageHead('我的绩效 · 月度工资条', '只读 · 仅本人可见 · 数据为演示') +
+      bar + stats +
+      card('收入明细 · ' + perfMonth, table(['项目', '金额', '说明'], incRows)) +
+      card('扣减明细 · ' + perfMonth, table(['项目', '金额'], decRows)) +
+      basis;
+  };
+
+  V.audit = function () {
+    var s = st();
+    var total = s.audits.reduce(function (a, b) { return a + b.income; }, 0);
+    var cost = s.audits.reduce(function (a, b) { return a + b.cost; }, 0);
+    return pageHead('月末费用核查', '三家门店收入、成本与差额核对') +
+      statGrid([['本月总收入', money(total)], ['本月总成本', money(cost)], ['毛利率', ((total - cost) / total * 100).toFixed(1) + '%'], ['待核查门店', s.audits.filter(function (a) { return a.status === '待核查'; }).length + ' 家', '#d97706']]) +
+      card('核查明细', table(['月份', '门店', '收入', '成本', '差额', '状态', '操作'],
+        s.audits.map(function (a) {
+          return '<tr><td>' + esc(a.month) + '</td><td><strong>' + esc(shop(a.shopId)) + '</strong></td><td>' + money(a.income) + '</td>' +
+            '<td>' + money(a.cost) + '</td><td>' + (a.diff ? '<span class="stock-low">' + money(a.diff) + '</span>' : '一致') + '</td>' +
+            '<td>' + tag(a.status, a.status === '已核查' ? 'tag-ok' : 'tag-warn') + '</td>' +
+            '<td class="op">' + (a.status === '待核查' ? btn('audit-run', a.id, '执行核查') : '—') + '</td></tr>';
+        })));
+  };
+
+  V.performance = function () {
+    var docCur = D.PERFORMANCE.filter(function (p) { return p.month === perfMonth; });
+    var stfCur = D.STAFF_PERF.filter(function (p) { return p.month === perfMonth; });
+    var bar = '<div class="perf-tabs">' + ['2026-10', '2026-09', '2026-08'].map(function (m) {
+      return '<button type="button" class="perf-tab' + (m === perfMonth ? ' active' : '') + '" data-act="perf-month" data-id="' + m + '">' + m + '</button>';
+    }).join('') + '</div>';
+    return pageHead('员工绩效 · ' + perfMonth, '三家门店医生与前台人员月度工资与考核') + bar +
+      card('医生绩效', table(['医生', '门店', '接诊量', '创收', '应发', '五险一金', '个税', '实发工资', '评分', '等级'],
+        docCur.map(function (p) {
+          var pay = D.PAYROLL(p, true);
+          return '<tr><td><strong>' + esc(p.name) + '</strong></td><td>' + esc(shop(p.shopId)) + '</td>' +
+            '<td>' + p.visits + ' 人次</td><td>' + money(p.income) + '</td><td>' + money(pay.gross) + '</td>' +
+            '<td>−' + money(pay.social) + '</td><td>−' + money(pay.tax) + '</td>' +
+            '<td><strong style="color:#0f766e">' + money(pay.net) + '</strong></td><td>' + p.score + ' 分</td>' +
+            '<td>' + tag(p.grade + ' 级', p.grade === 'A' ? 'tag-ok' : 'tag-info') + '</td></tr>';
+        }))) +
+      card('前台绩效', table(['姓名', '门店', '接待量', '应发', '五险一金', '个税', '实发工资', '评分', '等级'],
+        stfCur.map(function (p) {
+          var pay = D.PAYROLL(p, false);
+          return '<tr><td><strong>' + esc(p.name) + '</strong></td><td>' + esc(shop(p.shopId)) + '</td>' +
+            '<td>' + p.receptions + ' 人次</td><td>' + money(pay.gross) + '</td>' +
+            '<td>−' + money(pay.social) + '</td><td>−' + money(pay.tax) + '</td>' +
+            '<td><strong style="color:#0f766e">' + money(pay.net) + '</strong></td><td>' + p.score + ' 分</td>' +
+            '<td>' + tag(p.grade + ' 级', p.grade === 'A' ? 'tag-ok' : 'tag-info') + '</td></tr>';
+        })));
+  };
+
+  V.shops = function () {
+    return pageHead('门店管理', '三家连锁门店共用一套系统，业务数据按门店隔离') +
+      card('门店列表', table(['门店', '地址', '联系电话', '牙椅数', '状态'],
+        D.SHOPS.map(function (x) {
+          return '<tr><td><strong>' + esc(x.name) + '</strong></td><td>' + esc(x.address) + '</td><td>' + esc(x.tel) + '</td>' +
+            '<td>' + x.chairs + ' 台</td><td>' + tag(x.status, 'tag-ok') + '</td></tr>';
+        })));
+  };
+
+  V.logs = function () {
+    var list = st().accessLogs.slice(0, 60);
+    return pageHead('访问日志', '登录、查询、调阅与越权尝试均留痕') +
+      card('最近操作', table(['时间', '操作人', '工作视图', '操作', '详情', '患者', '门店'],
+        list.map(function (l) {
+          return '<tr><td>' + esc(l.time) + '</td><td>' + esc(l.worker) + '</td><td>' + esc(l.view) + '</td>' +
+            '<td>' + esc(l.action) + '</td><td>' + esc(l.detail) + '</td><td>' + esc(l.patientId || '—') + '</td>' +
+            '<td>' + esc(shop(l.shopId)) + '</td></tr>';
+        }), '暂无日志'));
+  };
+
+  V.settings = function () {
+    var s = st();
+    return pageHead('系统设置', '系统信息与演示数据维护') +
+      statGrid([['连锁门店', D.SHOPS.length + ' 家'], ['在册医生', D.DOCTORS.length + ' 位'], ['患者档案', D.PATIENTS.length + ' 份'], ['诊疗项目', D.SERVICES.length + ' 项']]) +
+      card('系统信息', '<div class="kv-grid"><span>系统名称</span><span>云齿通 CloudDent 门诊管理系统</span>' +
+        '<span>所属机构</span><span>方寸口腔连锁门诊</span><span>当前工作视图</span><span>' + esc(currentUser.label) + '</span>' +
+        '<span>数据保存</span><span>本机浏览器存储</span></div>') +
+      card('数据维护', '<p class="muted">重置后所有演示数据恢复到初始状态。</p><div class="toolbar" style="margin-top:12px">' +
+        btn('reset', '', '重置演示数据', 'btn-danger-plain') + '</div>');
+  };
+
+  /* ---------- 操作 ---------- */
+  var ACT = {
+    'perf-month': function (m) { perfMonth = m; render(); },
+    'patient-add': function () {
+      var name = val('pa-name'), phone = val('pa-phone');
+      if (!name || !phone) { toast('请填写姓名与联系电话', true); return; }
+      var p = { id: D.uid('P'), name: name, gender: '—', age: '—', phone: phone, allergy: val('pa-allergy') || '无',
+        shopId: val('pa-shop') || 'S1', level: val('pa-level') || '普通', doctorId: '', created: '2026-11-14' };
+      D.PATIENTS.push(p);
+      D.log('建立患者档案', p.name + ' · ' + phone, currentUser, p.id, p.shopId);
+      toast('档案已建立'); rerender();
+    },
+    'patient-view': function (id) {
+      var p = byId(D.PATIENTS, id) || {};
+      var recs = st().records.filter(function (r) { return r.patientId === id; });
+      detail('<div class="kv-grid"><span>姓名</span><span>' + esc(p.name) + '</span><span>联系电话</span><span>' + esc(p.phone) + '</span>' +
+        '<span>过敏史</span><span>' + esc(p.allergy) + '</span><span>建档门店</span><span>' + esc(shop(p.shopId)) + '</span>' +
+        '<span>会员等级</span><span>' + esc(p.level) + '</span><span>建档日期</span><span>' + esc(p.created) + '</span></div>' +
+        '<div class="divider"></div><p class="muted">本人诊疗记录 ' + recs.length + ' 条：' +
+        (recs.map(function (r) { return esc(r.date + ' ' + r.diagnosis); }).join('；') || '暂无') + '</p>');
+      D.log('查看患者档案', p.name, currentUser, id, p.shopId);
+    },
+    'appt-add': function () {
+      var pid = val('ap-patient'), date = val('ap-date'), time = val('ap-time'), item = val('ap-item');
+      if (!pid || !date || !time || !item) { toast('请完整填写预约信息', true); return; }
+      var p = byId(D.PATIENTS, pid);
+      var a = { id: D.uid('AP'), patientId: pid, name: p.name, shopId: val('ap-shop') || p.shopId,
+        date: date, time: time, doctorId: val('ap-doc'), item: item, status: '已预约', chair: '待分配', source: '前台登记' };
+      st().appointments.unshift(a);
+      D.log('新增预约', a.name + ' ' + date + ' ' + time, currentUser, pid, a.shopId);
+      toast('预约已创建'); rerender();
+    },
+    'appt-arrive': function (id) {
+      var a = byId(st().appointments, id); if (!a) return;
+      a.status = '已到诊';
+      var free = st().chairs.find(function (c) { return c.shopId === a.shopId && c.status === '空闲'; });
+      if (free) { free.status = '占用'; free.patient = a.name; a.chair = free.no; }
+      D.log('患者到诊', a.name + ' · ' + (a.chair || '待分配'), currentUser, a.patientId, a.shopId);
+      toast('已登记到诊'); rerender();
+    },
+    'appt-cancel': function (id) {
+      var a = byId(st().appointments, id); if (!a) return;
+      a.status = '已取消';
+      var chair = st().chairs.find(function (c) { return c.shopId === a.shopId && c.no === a.chair; });
+      if (chair) { chair.status = '空闲'; chair.patient = ''; }
+      D.log('取消预约', a.name + ' ' + a.date, currentUser, a.patientId, a.shopId);
+      toast('预约已取消'); rerender();
+    },
+    'sched-add': function () {
+      var d = val('sc-doc'), date = val('sc-date');
+      if (!d || !date) { toast('请选择医生与日期', true); return; }
+      st().schedules.unshift({ id: D.uid('SC'), doctorId: d, shopId: val('sc-shop') || 'S1', date: date,
+        period: val('sc-period') || '上午 08:30-12:00', total: 6, used: 0 });
+      D.log('新增医生排班', D.doctorName(d) + ' ' + date, currentUser);
+      toast('排班已保存'); rerender();
+    },
+    'sched-gen': function (id) {
+      var x = byId(st().schedules, id); if (!x) return;
+      var times = x.period.indexOf('下午') >= 0 ? ['14:00-15:00', '15:00-16:00', '16:00-17:00'] : ['09:00-10:00', '10:00-11:00', '11:00-12:00'];
+      times.forEach(function (t) {
+        if (!st().slots.some(function (s) { return s.date === x.date && s.doctorId === x.doctorId && s.time === t; })) {
+          st().slots.push({ id: D.uid('SL'), shopId: x.shopId, doctorId: x.doctorId, date: x.date, time: t, left: 2, status: '可约' });
+        }
+      });
+      x.total = st().slots.filter(function (s) { return s.date === x.date && s.doctorId === x.doctorId; }).length * 2;
+      D.log('生成可约号源', D.doctorName(x.doctorId) + ' ' + x.date, currentUser, '', x.shopId);
+      toast('号源已生成'); rerender();
+    },
+    'slot-toggle': function (id) {
+      var x = byId(st().slots, id); if (!x) return;
+      x.status = x.status === '可约' ? '停用' : '可约';
+      D.log('调整号源状态', x.id + ' → ' + x.status, currentUser, '', x.shopId);
+      rerender();
+    },
+    'chair-toggle': function (id) {
+      var x = byId(st().chairs, id); if (!x) return;
+      x.status = x.status === '空闲' ? '占用' : '空闲';
+      if (x.status === '空闲') x.patient = '';
+      D.log('调整牙椅状态', x.no + ' → ' + x.status, currentUser, '', x.shopId);
+      rerender();
+    },
+    'rec-add': function () {
+      var pid = val('rc-patient'), diag = val('rc-diag'), svc = byId(D.SERVICES, val('rc-service'));
+      if (!pid || !diag) { toast('请选择患者并填写诊断', true); return; }
+      var p = byId(D.PATIENTS, pid);
+      var r = { id: D.uid('TR'), patientId: pid, name: p.name, shopId: p.shopId,
+        doctorId: currentUser.doctorId || p.doctorId || 'D01', tooth: val('rc-tooth') || '—',
+        chief: val('rc-chief') || '—', diagnosis: diag, treatment: val('rc-treatment') || '—',
+        allergy: p.allergy, imaging: '—', date: '2026-11-14' };
+      st().records.unshift(r);
+      if (svc) {
+        st().bills.unshift({ id: D.uid('CS'), billNo: 'CS' + Date.now(), patientId: pid, name: p.name, shopId: p.shopId,
+          item: svc.name, amount: svc.price, status: '待收费', payMethod: '', doctorId: r.doctorId, date: '2026-11-14', receipt: '' });
+      }
+      D.log('保存诊疗记录并生成收费单', p.name + ' · ' + diag + (svc ? ' · ' + svc.name : ''), currentUser, pid, p.shopId);
+      toast('诊疗记录已保存，已联动生成收费单'); rerender();
+    },
+    'rec-view': function (id) {
+      var r = byId(st().records, id); if (!r) return;
+      detail('<div class="kv-grid"><span>患者</span><span>' + esc(r.name) + '</span><span>牙位</span><span>' + esc(r.tooth) + '</span>' +
+        '<span>主诉</span><span>' + esc(r.chief) + '</span><span>诊断</span><span>' + esc(r.diagnosis) + '</span>' +
+        '<span>处置</span><span>' + esc(r.treatment) + '</span><span>过敏史</span><span>' + esc(r.allergy) + '</span>' +
+        '<span>影像资料</span><span>' + esc(r.imaging) + '</span><span>就诊日期</span><span>' + esc(r.date) + '</span></div>');
+      D.log('查看电子病历', r.id + ' · ' + r.name, currentUser, r.patientId, r.shopId);
+    },
+    'bill-add': function () {
+      var pid = val('bl-patient'), svc = byId(D.SERVICES, val('bl-service'));
+      if (!pid || !svc) { toast('请选择患者与收费项目', true); return; }
+      var p = byId(D.PATIENTS, pid);
+      st().bills.unshift({ id: D.uid('CS'), billNo: 'CS' + Date.now(), patientId: pid, name: p.name,
+        shopId: val('bl-shop') || p.shopId, item: svc.name, amount: svc.price, status: '待收费',
+        payMethod: '', doctorId: p.doctorId, date: '2026-11-14', receipt: '' });
+      D.log('生成收费单', p.name + ' · ' + svc.name, currentUser, pid, p.shopId);
+      toast('收费单已生成'); rerender();
+    },
+    'bill-pay': function (id) {
+      var b = byId(st().bills, id); if (!b) return;
+      b.status = '已收款'; b.payMethod = val('pay-method') || '微信'; b.receipt = 'RCP' + Date.now();
+      D.log('收费收款', b.billNo + ' · ' + b.payMethod + ' · ' + money(b.amount), currentUser, b.patientId, b.shopId);
+      toast('收款成功，电子收据已生成'); rerender();
+    },
+    'bill-view': function (id) {
+      var b = byId(st().bills, id); if (!b) return;
+      detail('<div class="kv-grid"><span>收据号</span><span>' + esc(b.receipt) + '</span><span>患者</span><span>' + esc(b.name) + '</span>' +
+        '<span>项目</span><span>' + esc(b.item) + '</span><span>金额</span><span>' + money(b.amount) + '</span>' +
+        '<span>支付方式</span><span>' + esc(b.payMethod) + '</span><span>收款门店</span><span>' + esc(shop(b.shopId)) + '</span>' +
+        '<span>日期</span><span>' + esc(b.date) + '</span></div>');
+      D.log('查看电子收据', b.receipt, currentUser, b.patientId, b.shopId);
+    },
+    'member-redeem': function (pid) {
+      var m = st().members.find(function (x) { return x.patientId === pid; });
+      if (!m) return;
+      if (m.points < 500) { toast('积分不足 500，无法兑换', true); return; }
+      m.points -= 500; m.balance += 50;
+      D.log('积分兑换', D.patientName(pid) + ' 500 积分 → 储值 ¥50.00', currentUser, pid, m.shopId);
+      toast('兑换成功'); rerender();
+    },
+    'revisit-done': function (id) {
+      var r = byId(st().returnVisits, id); if (!r) return;
+      r.status = '已回访'; r.result = '电话回访完成，患者反馈良好';
+      D.log('登记回访结果', r.name + ' · ' + r.type, currentUser, r.patientId, r.shopId);
+      toast('回访结果已登记'); rerender();
+    },
+    'consume-add': function () {
+      var item = byId(st().consumables, val('iv-item')), qty = Number(val('iv-qty'));
+      if (!item || !qty || qty <= 0) { toast('请选择耗材并填写数量', true); return; }
+      if (qty > item.stock) { toast('库存不足', true); return; }
+      item.stock -= qty;
+      st().consumeLogs.unshift({ id: D.uid('CL'), shopId: item.shopId, item: item.name, qty: qty, date: '2026-11-14', by: currentUser.name });
+      D.log('登记耗材消耗', item.name + ' × ' + qty, currentUser, '', item.shopId);
+      toast('消耗已登记'); rerender();
+    },
+    'purchase-add': function () {
+      var item = byId(st().consumables, val('pu-item')), qty = Number(val('pu-qty'));
+      if (!item || !qty || qty <= 0) { toast('请选择耗材并填写数量', true); return; }
+      item.stock += qty;
+      st().purchases.unshift({ id: D.uid('PU'), shopId: item.shopId, item: item.name, qty: qty,
+        supplier: val('pu-supplier') || item.supplier, status: '已入库', date: '2026-11-14', by: currentUser.name });
+      D.log('耗材补货入库', item.name + ' × ' + qty, currentUser, '', item.shopId);
+      toast('入库成功，库存已更新'); rerender();
+    },
+    'cross-add': function () {
+      var pid = val('cr-patient'), to = val('cr-shop'), reason = val('cr-reason');
+      if (!pid || !to || !reason) { toast('请完整填写调阅申请', true); return; }
+      var p = byId(D.PATIENTS, pid);
+      st().crossRequests.unshift({ id: D.uid('CR'), patientId: pid, name: p.name,
+        applicantId: currentUser.doctorId || p.doctorId,
+        applicantRole: '口腔医生',
+        fromShopId: currentUser.shopId === 'ALL' ? p.shopId : currentUser.shopId, toShopId: to,
+        doctorId: currentUser.doctorId || p.doctorId, reason: reason, status: '待授权',
+        createdAt: now(), expireAt: '', approvedBy: '' });
+      D.log('发起跨店调阅申请', p.name + ' → ' + shop(to), currentUser, pid, to);
+      toast('申请已提交，等待目标门店授权'); rerender();
+    },
+    'cross-approve': function (id) {
+      var x = byId(st().crossRequests, id); if (!x) return;
+      if (currentUser.role === 'reception' && x.toShopId !== currentUser.shopId) { toast('只能授权本门店的调阅申请', true); return; }
+      x.status = '已授权'; x.approvedBy = currentUser.name;
+      var d = new Date(); d.setDate(d.getDate() + 7);
+      x.expireAt = d.toLocaleString('zh-CN', { hour12: false });
+      D.log('授权跨店调阅', x.id + ' · 有效期至 ' + x.expireAt, currentUser, x.patientId, x.toShopId);
+      toast('已授权，7 天内只读有效'); rerender();
+    },
+    'cross-reject': function (id) {
+      var x = byId(st().crossRequests, id); if (!x) return;
+      x.status = '已拒绝'; x.approvedBy = currentUser.name;
+      D.log('拒绝跨店调阅', x.id, currentUser, x.patientId, x.toShopId);
+      toast('已拒绝申请'); rerender();
+    },
+    'cross-view': function (id) {
+      var x = byId(st().crossRequests, id); if (!x) return;
+      if (x.status !== '已授权') { detail('<p class="muted">该申请未获授权，系统拒绝返回档案内容。</p>'); return; }
+      if (x.expireAt && new Date(x.expireAt.replace(/-/g, '/')) < new Date()) {
+        detail('<p class="muted">授权已过期，系统拒绝返回内容，请重新发起申请。</p>');
+        D.log('跨店调阅授权过期', x.id, currentUser, x.patientId, x.toShopId);
+        return;
+      }
+      var r = st().records.find(function (t) { return t.patientId === x.patientId && t.shopId === x.toShopId; });
+      if (!r) { detail('<p class="muted">目标门店暂无该患者的诊疗记录。</p>'); return; }
+      detail('<div class="sub-title">只读档案 · ' + esc(shop(x.toShopId)) + ' · 授权有效期至 ' + esc(x.expireAt) + '</div>' +
+        '<div class="kv-grid"><span>病历号</span><span>' + esc(r.id) + '</span>' +
+        '<span>患者</span><span>' + esc(r.name) + '</span><span>牙位</span><span>' + esc(r.tooth) + '</span>' +
+        '<span>主诉</span><span>' + esc(r.chief) + '</span><span>诊断</span><span>' + esc(r.diagnosis) + '</span>' +
+        '<span>处置</span><span>' + esc(r.treatment) + '</span><span>过敏史</span><span>' + esc(r.allergy) + '</span>' +
+        '<span>影像资料</span><span>' + esc(r.imaging) + '</span><span>日期</span><span>' + esc(r.date) + '</span></div>' +
+        '<p class="note muted">只读查看，不提供修改、导出与打印。</p>');
+      D.log('只读调阅他店档案', x.id + ' · ' + r.id, currentUser, x.patientId, x.toShopId);
+    },
+    'audit-run': function (id) {
+      var a = byId(st().audits, id); if (!a) return;
+      a.status = '已核查'; a.diff = 0;
+      D.log('执行月末费用核查', shop(a.shopId) + ' · ' + a.month, currentUser, '', a.shopId);
+      toast('核查完成'); rerender();
+    },
+    'reset': function () {
+      D.reset();
+      D.log('重置演示数据', '恢复初始数据', currentUser);
+      toast('数据已重置'); render();
+    }
+  };
+
+  /* ---------- 渲染与绑定 ---------- */
+  function route() { return (location.hash.replace(/^#\/?/, '') || 'dashboard').split('?')[0]; }
+
+  function renderShell() {
+    var logged = !!currentUser;
+    $('#login-wrap').style.display = logged ? 'none' : 'flex';
+    $('#app-shell').style.display = logged ? 'block' : 'none';
+    if (!logged) return;
+    $('#user-name').textContent = currentUser.name;
+    $('#user-role').textContent = currentUser.label + ' · ' + shop(currentUser.shopId);
+    $('#user-avatar').textContent = currentUser.name.charAt(0);
+    $('#crumb').textContent = '方寸口腔连锁门诊 · ' + shop(currentShop === 'ALL' ? currentUser.shopId : currentShop) + ' · ' + currentUser.label;
+    var nav = D.NAV.filter(function (n) { return n.roles.indexOf(currentUser.role) >= 0; });
+    /* 侧栏：按业务域分组，组标题可点开/收起 */
+    var order = [], buckets = {};
+    nav.forEach(function (n) {
+      var g = n.group || '';
+      if (!buckets[g]) { buckets[g] = []; order.push(g); }
+      buckets[g].push(n);
+    });
+    var navHtml = '';
+    order.forEach(function (g) {
+      var folded = !!(g && navFolded[g]);
+      if (g) {
+        navHtml += '<button type="button" class="nav-group' + (folded ? ' folded' : '') + '" data-group="' + esc(g) + '" title="展开/收起">' +
+                   '<span>' + esc(g) + '</span><i class="chev"></i></button>';
+      }
+      navHtml += '<div class="nav-box"' + (g ? ' data-box="' + esc(g) + '"' : '') + (folded ? ' hidden' : '') + '>' +
+        buckets[g].map(function (n) {
+          return '<a class="nav-item" href="#/' + n.path + '"><span>' + esc(n.label) + '</span></a>';
+        }).join('') + '</div>';
+    });
+    $('#nav').innerHTML = navHtml;
+    $$('#nav .nav-group').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var g = b.getAttribute('data-group');
+        navFolded[g] = !navFolded[g];
+        b.classList.toggle('folded', !!navFolded[g]);
+        var box = b.nextElementSibling;
+        if (box) {
+          if (navFolded[g]) box.setAttribute('hidden', '');
+          else box.removeAttribute('hidden');
+        }
+        try { localStorage.setItem(NAV_FOLD_KEY, JSON.stringify(navFolded)); } catch (e) {}
+      });
+    });
+    var roleSel = $('#staff-role');
+    if (roleSel) roleSel.value = staffKey;
+    var roleChip = $('#role-chip');
+    if (roleChip) roleChip.textContent = currentUser.label;
+    var shopSel = $('#shop-filter');
+    if (currentUser.role === 'all' || currentUser.role === 'hq') {
+      shopSel.style.display = '';
+      shopSel.innerHTML = '<option value="ALL">全部门店</option>' +
+        D.SHOPS.map(function (x) { return '<option value="' + x.id + '">' + esc(x.name) + '</option>'; }).join('');
+      shopSel.value = currentShop;
+    } else {
+      currentShop = currentUser.shopId;
+      shopSel.style.display = '';
+      shopSel.innerHTML = '<option value="' + currentUser.shopId + '">' + esc(shop(currentUser.shopId)) + '</option>';
+      shopSel.value = currentUser.shopId;
+    }
+    render();
+  }
+
+  function render() {
+    if (!currentUser) return;
+    var r = route(), view = $('#view');
+    $$('.nav-item').forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#/' + r); });
+    if (!can(r) && r !== 'dashboard') {
+      D.log('越权访问拦截', '尝试访问 #/' + r, currentUser);
+      view.innerHTML = pageHead('无权限', '访问已被系统拦截') +
+        card('访问受限', '<p class="muted">当前工作视图「' + esc(currentUser.label) + '」没有该功能的访问权限。本次尝试已写入访问日志。</p>');
+      return;
+    }
+    var nav = D.NAV.find(function (n) { return n.path === r; });
+    D.log('访问模块', nav ? nav.label : '工作台', currentUser);
+    view.innerHTML = (V[r] || V.dashboard)();
+  }
+
+  function bind() {
+    $('#btn-login').addEventListener('click', function () {
+      if (doLogin(val('login-user'), document.getElementById('login-pass').value)) {
+        location.hash = '#/dashboard'; renderShell();
+      }
+    });
+    $('#login-pass').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('#btn-login').click(); });
+    $('#btn-logout').addEventListener('click', doLogout);
+    if ($('#staff-role')) {
+      $('#staff-role').addEventListener('change', function (e) {
+        setStaff(e.target.value);
+        currentShop = 'ALL';
+        location.hash = '#/dashboard';
+        renderShell();
+      });
+    }
+    $('#shop-filter').addEventListener('change', function (e) { currentShop = e.target.value; renderShell(); });
+    $('#view').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-act]');
+      if (!b) return;
+      var fn = ACT[b.dataset.act];
+      if (fn) fn(b.dataset.id);
+    });
+    window.addEventListener('hashchange', function () { if (currentUser) render(); });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    D.load();
+    restoreSession();
+    bind();
+    renderShell();
+  });
+})();
+
+</script>
+<div id="cloud-db-badge" style="position:fixed;right:10px;bottom:8px;z-index:9999;font:11px/1.4 system-ui,sans-serif;color:#0a7a3d;background:#eafaf1;border:1px solid #b7e4cd;border-radius:6px;padding:3px 9px;opacity:.85">● 云端数据库已连接（31表）</div>
+<script>
+(function(){try{
+  var b=document.getElementById('cloud-db-badge');
+  if(location.protocol.indexOf('http')!==0){b.style.display='none';return;}
+  var x=new XMLHttpRequest();x.open('GET','/api/health',true);
+  x.onreadystatechange=function(){if(x.readyState===4){if(x.status===200&&x.responseText.indexOf('"ok": true')>=0){b.textContent='● 云端数据库已连接';b.style.color='#0a7a3d';}else{b.textContent='○ 本地演示模式';b.style.color='#a60';}}};
+  x.send(null);
+}catch(e){}})();
+</script>
+</body>
+</html>

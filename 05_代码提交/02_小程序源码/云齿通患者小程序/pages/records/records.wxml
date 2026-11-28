@@ -1,0 +1,14 @@
+<view class="page">
+  <view class="card" wx:for="{{list}}" wx:key="id">
+    <view class="list-item">
+      <text class="item-title">{{item.date}} · {{item.shopName}}</text>
+      <text class="tag">牙位 {{item.tooth}}</text>
+    </view>
+    <view class="kv"><text class="kv-label">主诊医生</text><text>{{item.doctor}}</text></view>
+    <view class="kv"><text class="kv-label">主诉</text><text>{{item.chief}}</text></view>
+    <view class="kv"><text class="kv-label">诊断</text><text>{{item.diagnosis}}</text></view>
+    <view class="kv"><text class="kv-label">处置</text><text>{{item.treatment}}</text></view>
+    <view class="kv"><text class="kv-label">影像资料</text><text>{{item.imaging}}</text></view>
+  </view>
+  <view class="empty" wx:if="{{list.length === 0}}">暂无就诊记录</view>
+</view>
